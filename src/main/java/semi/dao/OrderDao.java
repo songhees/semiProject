@@ -38,7 +38,7 @@ public class OrderDao {
 				+ "		product_item_no, product_color, product_size, "
 				+ "		product_no, product_name, "
 				+ "		thumbnail_image_url "
-				+ "from (select row_number() over (order by o.order_no desc) rn, "
+				+ "from (select row_number() over (order by o.order_no desc, t.product_item_no asc) rn, "
 				+ "			o.order_no, o.total_price, o.order_status, o.order_created, "
 				+ "			i.order_product_price, i.order_product_quantity, "
 				+ "			t.product_item_no, t.product_color, t.product_size, "

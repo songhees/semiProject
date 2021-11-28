@@ -8,13 +8,14 @@
 		font-size: 13px;
 	}
 	
-	#navbar-2 > ul > li > a {
+	#navbar-2 > ul > li > a.nav-link {
 		color: black;
 		font-weight: normal;
 		font-size: 15px;
+		min-width: 70px;
 	}
-	#navbar-2 > ul > li {
-		padding: 3px;
+	#navbar-2 > ul > li.nav-item {
+		margin: 3px;
 	}
 </style>
 <%
@@ -30,8 +31,14 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbar-1">
 				<ul class="navbar-nav me-auto mb-1 mb-lg-0">
+<%
+	if (loginUserInfo == null) {
+%>
 					<li class="nav-item"><a href="#" class="nav-link">LOGIN</a></li>
 					<li class="nav-item"><a href="#" class="nav-link">JOIN US</a></li>
+<%
+	} else {
+%>
 					<li class="nav-item"><a href="#" class="nav-link">LOGOUT</a></li>
 					<li class="nav-item dropdown">
 				    	<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">MY PAGE</a>
@@ -44,6 +51,9 @@
 				            <li><a class="dropdown-item" href="#">최근본상품</a></li>
 				        </ul>
         			</li>
+<%
+	}
+%>
 				</ul>
 	  		</div>
 		</div>

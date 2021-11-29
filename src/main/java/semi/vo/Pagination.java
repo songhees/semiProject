@@ -2,7 +2,7 @@ package semi.vo;
 
 public class Pagination {
 	private int rowsPerPage = 5;
-	private int pagePerBlock =5;
+	private int pagePerBlock = 5;
 	private int currentPage;
 	private int currentBlock;
 	private int totalRecords;	

@@ -5,11 +5,11 @@ import java.util.Date;
 public class OrderItemDto {
 	// Order order
 	private int orderNo;
-	private int totalPrice;
+	private long totalPrice;
 	private String status;
 	private Date orderCreatedDate;
 	// OrderItem
-	private int orderProductPrice;
+	private long orderProductPrice;
 	private int orderProductQuantity;
 	// ProductItem
 	private int productItemNo;
@@ -30,11 +30,11 @@ public class OrderItemDto {
 		this.orderNo = orderNo;
 	}
 
-	public int getTotalPrice() {
+	public long getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(int totalPrice) {
+	public void setTotalPrice(long totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
@@ -54,11 +54,11 @@ public class OrderItemDto {
 		this.orderCreatedDate = orderCreatedDate;
 	}
 
-	public int getOrderProductPrice() {
+	public long getOrderProductPrice() {
 		return orderProductPrice;
 	}
 
-	public void setOrderProductPrice(int orderProductPrice) {
+	public void setOrderProductPrice(long orderProductPrice) {
 		this.orderProductPrice = orderProductPrice;
 	}
 

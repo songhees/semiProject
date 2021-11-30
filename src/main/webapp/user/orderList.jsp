@@ -1,3 +1,4 @@
+<%@page import="org.apache.tomcat.jakartaee.commons.io.output.NullOutputStream"%>
 <%@page import="semi.criteria.OrderItemCriteria"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -23,9 +24,9 @@
 <style type="text/css">
 
 	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover {
-	text-decoration: none;
-	color: #757575;
-	font-size: 14px;
+		text-decoration: none;
+		color: #757575;
+		font-size: 14px;
 	}
 	a.hover:hover {
 		color: #d9d7d7;
@@ -60,7 +61,6 @@
 	.nav > li {
     	border-right: 1px solid #ebebeb;
 	}
-	
 	a.page-link {
 		border: none;
 		color: #757575;
@@ -82,20 +82,30 @@
 </style>
 </head>
 <body>
+<!-- 굳이 status에 대해 나눌 필요없이 subMenu로 나누면된다 -> 코드 줄임 -->
 <%@ include file="../common/navbar.jsp" %>
 <%
 	
-	String subMenu = request.getParameter("subMenu");
 	String pageNo = request.getParameter("pageNo");
+	OrderDao orderDao = OrderDao.getinstance();
+	OrderItemCriteria criteria = new OrderItemCriteria();
+	
+	String subMenu = request.getParameter("subMenu");
 	String startDate = request.getParameter("startDate");
 	String endDate = request.getParameter("endDate");
-
-	System.out.println("subMenu = [" + subMenu + "]");
-	System.out.println("pageNo = [" + pageNo + "]");
-	System.out.println("startDate = [" + startDate + "]");
-	System.out.println("endDate = [" + endDate + "]");
 	
-	OrderDao orderDao = OrderDao.getinstance();
+	if (subMenu == null) {
+		subMenu = "order";
+		startDate = criteria.getPeriod(3)[0];
+		endDate = criteria.getPeriod(3)[1];
+	} else if (subMenu != null && startDate == null) {
+		startDate = criteria.getPeriod(3)[0];
+		endDate = criteria.getPeriod(3)[1];
+	}
+	System.out.println("[subMenu]" + subMenu);
+	System.out.println("[startDate]" + startDate);
+	System.out.println("[endDate]" + endDate);
+	
 	
 	/* 로그인 없이 이 페이지에 접근하는 경우 */
 /* 	if (loginUserInfo == null) {
@@ -103,41 +113,37 @@
 		return;
 	} */
 
-	/* login.jsp 완성시  loginUserInfo.getId() 넣기*/
-	int totalRecords = orderDao.getTotalRecords("osh");
-	Pagination pagination = new Pagination(pageNo, totalRecords);
-	
 	/* 검색 조건 */
-	OrderItemCriteria criteria = new OrderItemCriteria();
 	/* login.jsp 완성시  loginUserInfo.getId() 넣기*/
 	criteria.setUserId("osh");
-	criteria.setBegin(pagination.getBegin());
-	criteria.setEnd(pagination.getEnd());
 	criteria.setBeginDate(startDate);
 	criteria.setEndDate(endDate);
+	criteria.setStatus(subMenu);
 	
-	int nowYear = Calendar.getInstance().get(Calendar.YEAR);
+	/* 예외발생시 */
+	int nowYear = Calendar.getInstance().get(Calendar.YEAR)-1;
 	int year = 0;
 	
-	if ("order".equals(subMenu)) {
-		criteria.setStatus("주문완료");
-		
-	} else if ("cancel".equals(subMenu)) {
-		criteria.setStatus("취소");
-		
-	} else if ("history".equals(subMenu)) {
-		criteria.setStatus("주문완료");
+	/* "subMenu" 가 뭔지에 따라  orderDao.getOrderItemListByUserId의 매개 변수를 다르게 한다.*/
+	if ("history".equals(subMenu)) {
 		try {
 			year = Integer.parseInt(request.getParameter("year"));
 		} catch (NumberFormatException e) {
 			year = nowYear;
 		}
-		
-		criteria.setBeginDate(year + "-" + "01-01");
-		criteria.setEndDate((year+1) + "-" + "01-01");
+		criteria.setBeginDate(year + "/01/01");
+		System.out.print("[year]" + year + "/01/01");
+		criteria.setEndDate((year+1) + "/01/01");
 	}
+	
+	int totalRecords = orderDao.getTotalRecords(criteria);
+	Pagination pagination = new Pagination(pageNo, totalRecords, 5, 5);
+	
+	/* login.jsp 완성시  loginUserInfo.getId() 넣기*/
+	criteria.setBegin(pagination.getBegin());
+	criteria.setEnd(pagination.getEnd());
+
 	List<OrderItemDto> itemList = orderDao.getOrderItemListByUserId(criteria);
-	/* "subMenu" 가 뭔지에 따라  orderDao.getOrderItemListByUserId의 매개 변수를 다르게 한다.*/
 %>
 <div class="container">    
 	<!-- 브레드크럼 breadcrumb -->
@@ -154,22 +160,18 @@
 	<div class="text-center mt-5">
 		<h5><strong>ORDER</strong></h5>
 	</div>
-	<!-- tabs subMenu -->
+	<!-- 주문상태 tabs subMenu -->
 	<div class="mt-5" style="background-color: #FFFAFA">
 		<ul class="nav nav-tabs nav-justified border">
-		    <li class="nav-item"><a class="nav-link <%="order".equals(subMenu)? "active" : ""%>" href="orderList.jsp?pageNo=1&subMenu=order">주문내역조회 (<%=totalRecords %>)</a></li>
-		    <!-- 주문 상태가 취소/반품/교환 인 상품의 목록으로 이동하는 버튼
-		    	이때 새로운 jsp를 만들어야 되나 아니면 orderList.jsp에서 if ("cancel".equals(subMenu)) 를 통해 나눠야 되나?
-		     -->
-		    <li class="nav-item"><a class="nav-link <%="cancel".equals(subMenu)? "active" : ""%>" href="orderList.jsp?pageNo=1&subMenu=cancel">취소/반품/교환 내역 ()</a></li>
+		    <li class="nav-item"><a class="nav-link <%="order".equals(subMenu)? "active" : ""%>" href="orderList.jsp?pageNo=1&subMenu=order">주문내역조회</a></li>
+		    <!-- 주문 상태가 취소/반품/교환 인 상품의 목록으로 이동하는 버튼 -->
+		    <li class="nav-item"><a class="nav-link <%="cancel".equals(subMenu)? "active" : ""%>" href="orderList.jsp?pageNo=1&subMenu=cancel">취소/반품/교환내역</a></li>
 		    <!-- 년도별 주문내역 조회 -->
-		    <li class="nav-item"><a class="nav-link <%="history".equals(subMenu)? "active" : ""%>" href="orderList.jsp?pageNo=1&subMenu=history">과거주문내역 ()</a></li>
+		    <li class="nav-item"><a class="nav-link <%="history".equals(subMenu)? "active" : ""%>" href="orderList.jsp?pageNo=1&subMenu=history">과거주문내역</a></li>
 	    	<li class="nav-item"><a class="nav-link disabled" href="#"></a></li>
 		</ul>
-	</div >
-	<!-- 날짜 검색 -> 
-		 주문 날짜에 따른 주문 목록을 분리한다.
-	-->
+	</div>
+	<!-- 특정 주문상태 TAB에 해당하는 날짜 검색 -->
 	<div class="my-3 border">
 <%
 	if ("history".equals(subMenu)) {
@@ -203,6 +205,7 @@
 	}
 %>
 	</div>
+	<!-- 부가 설명  -->
 	<div>
 		<ul class="mb-5" style="font-size: 12px; color: #757575;">
 			<li>기본적으로 최근 3개월간의 자료가 조회되며, 기간 검색시 주문처리완료 후 15개월 이내의 주문내역을 조회하실 수 있습니다.</li>
@@ -214,6 +217,8 @@
 	<!-- table 주문 목록 -->
 	<div>
 		<h6><small>주문 상품 정보</small></h6>
+	</div>
+	<div>
 		<table>
 			<colgroup>
 				<col width="9%">

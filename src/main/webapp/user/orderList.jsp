@@ -1,3 +1,4 @@
+<%@page import="java.text.DecimalFormat"%>
 <%@page import="org.apache.tomcat.jakartaee.commons.io.output.NullOutputStream"%>
 <%@page import="semi.criteria.OrderItemCriteria"%>
 <%@page import="java.util.Calendar"%>
@@ -61,6 +62,7 @@
 	.nav > li {
     	border-right: 1px solid #ebebeb;
 	}
+	
 	a.page-link {
 		border: none;
 		color: #757575;
@@ -102,10 +104,6 @@
 		startDate = criteria.getPeriod(3)[0];
 		endDate = criteria.getPeriod(3)[1];
 	}
-	System.out.println("[subMenu]" + subMenu);
-	System.out.println("[startDate]" + startDate);
-	System.out.println("[endDate]" + endDate);
-	
 	
 	/* 로그인 없이 이 페이지에 접근하는 경우 */
 /* 	if (loginUserInfo == null) {
@@ -132,7 +130,6 @@
 			year = nowYear;
 		}
 		criteria.setBeginDate(year + "/01/01");
-		System.out.print("[year]" + year + "/01/01");
 		criteria.setEndDate((year+1) + "/01/01");
 	}
 	
@@ -240,6 +237,7 @@
 			</thead>
 			<tbody>
 <%
+	DecimalFormat df = new DecimalFormat("##,###");
 	if (itemList.isEmpty()) {
 %>
 				<tr>
@@ -270,6 +268,7 @@
 <%			
 			}
 			comparedOrderNo = item.getOrderNo();
+			String productPrice = df.format(item.getOrderProductPrice());
 %>
 					<td><img alt="" src="../resources/images/product/<%=item.getProductNo() %>/thumbnail/<%=item.getThumbnailUrl() %>"></td>
 					<td style="text-align: left;">
@@ -279,7 +278,7 @@
 						<pre>[옵션: <%=item.getColor() %>/<%=item.getSize() %>]</pre>
 					</td>
 					<td><%=item.getOrderProductQuantity() %></td>
-					<td><strong><%=item.getOrderProductPrice() %>원</strong></td>
+					<td><strong><%=productPrice %>원</strong></td>
 					<td><%=item.getStatus() %>
 						<button class="btn btn-dark btn-sm opacity-75 m-1" <%="주문완료".equals(item.getStatus())? "" : "disabled" %>>구매후기</button>
 					</td>

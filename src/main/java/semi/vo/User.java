@@ -15,6 +15,7 @@ public class User {
 	private String smsSubscription;
 	private int point;
 	private String admin;
+	private String deleted;
 	private Date deletedDate;
 	private Date updatedDate;
 	private Date createdDate;
@@ -107,6 +108,14 @@ public class User {
 
 	public void setAdmin(String admin) {
 		this.admin = admin;
+	}
+	
+	public String getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
 	}
 
 	public Date getDeletedDate() {

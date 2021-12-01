@@ -2,7 +2,7 @@ package semi.vo;
 
 public class OrderItem {
 	private Order order;
-	private int orderProductPrice;
+	private long orderProductPrice;
 	private int orderProductQuantity;
 	private ProductItem productItem;
 	
@@ -16,11 +16,11 @@ public class OrderItem {
 		this.order = order;
 	}
 
-	public int getOrderProductPrice() {
+	public long getOrderProductPrice() {
 		return orderProductPrice;
 	}
 
-	public void setOrderProductPrice(int orderProductPrice) {
+	public void setOrderProductPrice(long orderProductPrice) {
 		this.orderProductPrice = orderProductPrice;
 	}
 

@@ -3,10 +3,11 @@ package semi.vo;
 public class Address {
 	private int addressNo;
 	private User user;
-	private String orderAddressName;
-	private String orderPostalCode;
+	private String name;
+	private String postalCode;
 	private String addressDefault;
-	private String addressDetail;
+	private String detail;
+	private String baseAddress;
 	
 	public Address() {}
 
@@ -26,20 +27,20 @@ public class Address {
 		this.user = user;
 	}
 
-	public String getOrderAddressName() {
-		return orderAddressName;
+	public String getName() {
+		return name;
 	}
 
-	public void setOrderAddressName(String orderAddressName) {
-		this.orderAddressName = orderAddressName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getOrderPostalCode() {
-		return orderPostalCode;
+	public String getPostalCode() {
+		return postalCode;
 	}
 
-	public void setOrderPostalCode(String orderPostalCode) {
-		this.orderPostalCode = orderPostalCode;
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
 	}
 
 	public String getAddressDefault() {
@@ -50,12 +51,20 @@ public class Address {
 		this.addressDefault = addressDefault;
 	}
 
-	public String getAddressDetail() {
-		return addressDetail;
+	public String getDetail() {
+		return detail;
 	}
 
-	public void setAddressDetail(String addressDetail) {
-		this.addressDetail = addressDetail;
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
-	
+
+	public String getBaseAddress() {
+		return baseAddress;
+	}
+
+	public void setBaseAddress(String baseAddress) {
+		this.baseAddress = baseAddress;
+	}
+
 }

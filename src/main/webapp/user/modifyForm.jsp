@@ -1,3 +1,5 @@
+<%@page import="semi.vo.Address"%>
+<%@page import="semi.dao.AddressDao"%>
 <%@page import="semi.dao.UserDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -15,7 +17,7 @@
 		font-size: 14px;
 	}
 	
-	.vintable tbody th {
+	.vintable tbody th, input[type=button]:hover {
     	font-weight: normal;
     	background-color: #fbfafa;
 	}
@@ -32,14 +34,14 @@
   		width: 100%;
   		margin: auto;
 	} 
-	.vintable + div > div > button {
+	.vintable + div button  {
 		border-radius: 0;
 		width: 120px;
 		height: 40px;
 		font-size: 11px;
 		
 	}
-	.vintable + div > div >a {
+	.vintable + div a {
 		padding-top: 11px;
 		border-radius: 0;
 		width: 120px;
@@ -61,16 +63,17 @@
     	font-size: 13px;
     	width: 300px;
 	}	
-	input[name=userTel] {
+	input[name=userTel], input[id=postcode] {
 		width: 80px;
 	}
 	
-	input[id=postcode] {
-		width: 80px;
-	}
 	input[id=address], input[id=detailAddress] {
 		margin-top: 3px;
 		width: 500px;
+	}
+	
+	input[type=button] {
+		border: 1px solid #757575;
 	}
 </style>
 </head>
@@ -85,161 +88,179 @@
 	} */
 
 	UserDao userDao = UserDao.getInstance();
+	AddressDao addressDao = AddressDao.getInstance();
 	
-	/* login.jsp 완성시  loginUserInfo.getId() 넣기*/
+	/* login.jsp 완성시  loginUserInfo.getId() 넣기
+		번호를얻어서 주소록을 조회한다.
+	*/
 	User userInfo = userDao.getUserById("osh");
-	
+	Address address = addressDao.getRepresentativeAddressByNo(userInfo.getNo());
+
 	String[] tel = userInfo.getTel().split("-");
 %>
-<div class="container">    
-	<!-- 브레드크럼 breadcrumb -->
-	<div>
-		<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-		  <ol class="breadcrumb justify-content-end">
-		    <li class="breadcrumb-item"><a href="#">HOME</a></li>
-		    <li class="breadcrumb-item active" aria-current="page">EDIT PROFILE</li>
-		  </ol>
-		</nav>
-	</div>
-	<!-- 제목 -->
-	<div class="text-center mt-5">
-		<h5><strong>EDIT PROFILE</strong></h5>
-	</div>
-	<!-- 주문정보 table -->
-	<div class="my-5">
-		<form id="loginForm" action="modify.jsp" method="post" onsubmit="checkInputField(event)">
-			<table class="vintable">
-				<tbody>
-					<colgroup>
-						<col width="13%">
-						<col width="*">
-					</colgroup>
-					<tr>
-						<th>아이디</th>
-						<td><input type="text" name="userId" value="<%=userInfo.getId() %>" disabled="disabled" readonly="readonly"><span class="px-1">(영문소문자/숫자, 4~16자)</span></td>
-					</tr>
-					<tr>
-						<th>비밀번호 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-						<td>
-							<input maxlength="16" type="password" name="userPassword" id="userPassword">
-							<span class="px-1" id="as">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합, 8~16자)</span>
-							<div class="form-text text-danger" style="display: none;" id="error-password">
-								
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<th>비밀번호 확인 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-						<td>
-							<input type="password" id="comparedPassword">
-							<div class="form-text text-danger" style="display: none;" id="error-password-same">
-								비밀번호가 일치하지 않습니다.
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<th>이름</th>
-						<td><input type="text" name="userId" value="<%=userInfo.getName() %>" disabled="disabled" readonly="readonly"></td>
-					</tr>
-					<tr>
-						<th>주소</th>
-						<td>
-							<input type="text" id="postcode" placeholder="우편번호">
-							<input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
-							<input type="text" id="address" placeholder="주소"><br>
-							<input type="text" id="detailAddress" placeholder="상세주소">
-						</td>
-					</tr>
-					<tr>
-						<th>휴대전화 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-						<td><input maxlength="3" type="text" name="userTel" value="<%=tel[0] %>">
-							-
-							<input maxlength="4" type="text" name="userTel" value="<%=tel[1] %>">
-							-
-							<input maxlength="4" type="text" name="userTel" value="<%=tel[2] %>"></td>
-					</tr>
-					<tr>
-						<th>SMS 수신여부 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-						<td><input type="radio" value="Y" name="snsSubscription" <%="Y".equals(userInfo.getSmsSubscription())? "checked" : "" %>> 수신함
-							<input type="radio" value="N" name="snsSubscription" <%="N".equals(userInfo.getSmsSubscription())? "checked" : "" %>> 수신안함
-							<div>
-								쇼핑몰에서 제공하는 유익한 이벤트 소식을 SMS로 받으실 수 있습니다.
-							</div>	
-						</td>
-					</tr>
-					<tr>
-						<th>이메일 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-						<td><input type="text" name="userEmail" value="<%=userInfo.getEmail() %>">
-						</td>
-					</tr>
-					<tr>
-						<th>이메일 수신여부 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-						<td><input type="radio" value="Y" name="emailSubscription" <%="Y".equals(userInfo.getEmailSubscription())? "checked" : "" %>> 수신함
-							<input type="radio" value="N" name="emailSubscription" <%="N".equals(userInfo.getEmailSubscription())? "checked" : "" %>> 수신안함
-							<div>
-								쇼핑몰에서 제공하는 유익한 이벤트 소식을 email로 받으실 수 있습니다.
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="row">
-				<div class="col">	
-					<button class="btn btn-dark opacity-75" type="submit">회원정보수정</button>
-					<a href="../index.jsp" class="btn btn-dark opacity-50">취소</a>
-				</div>
-				<div class="col text-center">
-					<button class="btn btn-ourline-dark btn-sm" type="submit" onclick="">회원탈퇴</button>
-				</div>
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<!-- 브레드크럼 breadcrumb -->
+			<div>
+				<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+				  <ol class="breadcrumb justify-content-end">
+				    <li class="breadcrumb-item"><a href="#">HOME</a></li>
+				    <li class="breadcrumb-item active" aria-current="page">EDIT PROFILE</li>
+				  </ol>
+				</nav>
 			</div>
-<!-- 				<div class="mt-5">
-					<div>
-						<h3>추가정보</h3>
-					</div>
-					<table>
-						<colgroup>
-							<col width="13%">
-							<col width="*">
-						</colgroup>
+			<!-- 제목 -->
+			<div class="text-center mt-5">
+				<h5><strong>EDIT PROFILE</strong></h5>
+			</div>
+			<!-- 주문정보 table -->
+			<div class="my-5">
+				<form id="loginForm" action="modify.jsp" method="post" onsubmit="checkInputField(event)">
+					<table class="vintable">
 						<tbody>
+							<colgroup>
+								<col width="13%">
+								<col width="*">
+							</colgroup>
 							<tr>
-								<th>성별</th>
-								<td><input type="radio" name="gender"></td>
+								<th>아이디</th>
+								<td><input type="text" name="userId" value="<%=userInfo.getId() %>" readonly="readonly"><span class="px-1">(영문소문자/숫자, 4~16자)</span></td>
 							</tr>
 							<tr>
-								<th>생년월일</th>
-								<td><input type="text" name="birthday"></td>
+								<th>비밀번호 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
+								<td>
+									<input maxlength="16" type="password" name="userPassword" id="userPassword">
+									<span class="px-1" id="as">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합, 8~16자)</span>
+									<div class="form-text text-danger" style="display: none;" id="error-password">
+										
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>비밀번호 확인 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
+								<td>
+									<input type="password" id="comparedPassword">
+									<div class="form-text text-danger" style="display: none;" id="error-password-same">
+										비밀번호가 일치하지 않습니다.
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>이름</th>
+								<td><input type="text" name="name" value="<%=userInfo.getName() %>" readonly="readonly"></td>
+							</tr>
+							<tr>
+								<th>주소</th>
+								<td>
+									<input name="postcode" type="text" id="postcode" placeholder="우편번호" value="<%=address != null? address.getPostalCode() : "" %>">
+									<input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+									<input name ="baseAddress" type="text" id="address" placeholder="주소" value="<%=address != null? address.getBaseAddress() : "" %>"><br>
+									<input name="addressDetail" type="text" id="detailAddress" placeholder="상세주소" value="<%=address != null? address.getDetail() : "" %>">
+								</td>
+							</tr>
+							<tr>
+								<th>휴대전화 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
+								<td><input maxlength="3" type="text" name="userTel" value="<%=tel[0] %>">
+									-
+									<input maxlength="4" type="text" name="userTel" value="<%=tel[1] %>">
+									-
+									<input maxlength="4" type="text" name="userTel" value="<%=tel[2] %>">
+									<div class="form-text text-danger" style="display: none;" id="error-tel">
+										휴대전화 번호를 입력해주세요.
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>SMS 수신여부 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
+								<td><input type="radio" value="Y" name="smsSubscription" <%="Y".equals(userInfo.getSmsSubscription())? "checked" : "" %>> 수신함
+									<input type="radio" value="N" name="smsSubscription" <%="N".equals(userInfo.getSmsSubscription())? "checked" : "" %>> 수신안함
+									<div>
+										쇼핑몰에서 제공하는 유익한 이벤트 소식을 SMS로 받으실 수 있습니다.
+									</div>	
+								</td>
+							</tr>
+							<tr>
+								<th>이메일 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
+								<td><input type="text" name="userEmail" value="<%=userInfo.getEmail() %>" id="email">
+									<div class="form-text text-danger" style="display: none;" id="error-email">
+										이메일을 입력해 주세요.
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>이메일 수신여부 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
+								<td><input type="radio" value="Y" name="emailSubscription" <%="Y".equals(userInfo.getEmailSubscription())? "checked" : "" %>> 수신함
+									<input type="radio" value="N" name="emailSubscription" <%="N".equals(userInfo.getEmailSubscription())? "checked" : "" %>> 수신안함
+									<div>
+										쇼핑몰에서 제공하는 유익한 이벤트 소식을 email로 받으실 수 있습니다.
+									</div>
+								</td>
 							</tr>
 						</tbody>
 					</table>
-				</div> -->
-		</form>
-	</div>
-<%
-%>
+					<div class="row mt-2">
+						<div class="col">
+							<div class="row d-grid d-md-flex">
+								<div class="offset-1 col-10 text-center">	
+									<button class="btn btn-dark opacity-75" type="submit">회원정보수정</button>
+									<a href="../index.jsp" class="btn btn-dark opacity-50">취소</a>
+								</div>
+								<div class="col-1">
+									<button class="btn btn-outline-secondary btn-sm" style="width: 80px;" type="submit">회원탈퇴</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>    
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript">
 	function checkInputField(event) {
 		event.preventDefault();
 		
 		var loginForm = document.getElementById("loginForm");
 		
+		/* 오류 확인할 대상 */
 		var comparedPwd = document.getElementById("comparedPassword").value;
-		var inputPwd = document.getElementById("userPassword").value;
+		var inputEmail = document.getElementById("email").value;
+		var inputTel = document.querySelectorAll("input[name=userTel]");
 		
+		var password = document.getElementById("userPassword");
+		var inputPwd = password.value;
+		
+		/* 오류 메세지 */
 		var errorMessagePwdByInput = document.getElementById("error-password");
-			
 		var errorMessagePwdBySame = document.getElementById("error-password-same");
-
+		var errorMessageEmail = document.getElementById("error-email");
+		var errorMessageTel = document.getElementById("error-tel");		
+		
+		var pattern1 = /[0-9]+/;
+		var pattern2 = /[a-zA-Z]+/;
+		var pattern3 = /[!_?#@~\-+*]+/;
+		
 		errorMessagePwdBySame.style.display = 'none';
 		errorMessagePwdByInput.style.display = 'none';
+		errorMessageEmail.style.display = 'none';
+		errorMessageTel.style.display = 'none';
 		
 		var inValid = true;
 		if (inputPwd === '') {
 			errorMessagePwdByInput.textContent = '비밀번호를 입력해주세요.'
 			errorMessagePwdByInput.style.display = '';
 			inValid = false;
+		} else if (inputPwd <= 7) {
+			errorMessagePwdByInput.textContent = '최소 8글자 이상이어야 합니다.'
+			errorMessagePwdByInput.style.display = '';
+			inValid = false;			
+		} else if (!pattern1.test(password) || !pattern2.test(password) || !pattern3.test(password)) {
+			errorMessagePwdByInput.textContent = '비밀번호는 영문 대소문자, 숫자, 특수문자로 구성해야 합니다.'
+			errorMessagePwdByInput.style.display = '';
+			inValid = false;			
 		}
 		
 		if (inputPwd !== comparedPwd) {
@@ -247,18 +268,23 @@
 			inValid = false;
 		}
 		
+		if (inputEmail === '') {
+			errorMessageEmail.style.display = '';
+			inValid = false;
+		}
+		
+		for (var i=0; i<inputTel.length; i++) {
+			if (inputTel[i].value === '') {
+				errorMessageTel.style.display = '';
+				inValid = false;
+			}
+		}
+		
 		if (inValid) {
 			loginForm.submit();
 		}
 	}
 	
-	function isSame() {
-
-		
-	}
-</script>
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script>
     function sample6_execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {

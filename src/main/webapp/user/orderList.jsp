@@ -193,6 +193,8 @@
 	} else {
 %>
 		<div class="btn-group btn-group-sm p-3">
+			<!-- <form id="form-search" method="get" action="orderList.jsp">
+					<input type="button" onclick="" name="period">오늘 -->
 		  	<a class="btn btn-outline-secondary" href="orderList.jsp?pageNo=1&subMenu=<%=subMenu %>&startDate=<%=criteria.getPeriod(0)[0] %>&endDate=<%=criteria.getPeriod(0)[1] %>">오늘</a>
 			<a class="btn btn-outline-secondary" href="orderList.jsp?pageNo=1&subMenu=<%=subMenu %>&startDate=<%=criteria.getPeriod(1)[0] %>&endDate=<%=criteria.getPeriod(1)[1] %>">1개월</a>
 			<a class="btn btn-outline-secondary" href="orderList.jsp?pageNo=1&subMenu=<%=subMenu %>&startDate=<%=criteria.getPeriod(3)[0] %>&endDate=<%=criteria.getPeriod(3)[1] %>">3개월</a>
@@ -320,5 +322,8 @@
 %>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+	
+</script>
 </body>
 </html>

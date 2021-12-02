@@ -42,6 +42,7 @@ public class UserDao {
 			user.setEmail(rs.getString("user_email"));
 			user.setEmailSubscription(rs.getString("user_email_subscription"));
 			user.setSmsSubscription(rs.getString("user_sms_subscription"));
+			user.setPoint(rs.getInt("user_point"));
 			user.setDeleted(rs.getString("user_deleted"));
 			user.setDeletedDate(rs.getDate("user_deleted_date"));
 			user.setUpdatedDate(rs.getDate("user_updated_date"));
@@ -78,6 +79,7 @@ public class UserDao {
 			user.setEmail(rs.getString("user_email"));
 			user.setEmailSubscription(rs.getString("user_email_subscription"));
 			user.setSmsSubscription(rs.getString("user_sms_subscription"));
+			user.setPoint(rs.getInt("user_point"));
 			user.setDeleted(rs.getString("user_deleted"));
 			user.setDeletedDate(rs.getDate("user_deleted_date"));
 			user.setUpdatedDate(rs.getDate("user_updated_date"));
@@ -98,21 +100,29 @@ public class UserDao {
 	public void updateUser(User user) throws SQLException {
 		String sql = "update semi_user "
 				   + "set "
+				   + "	grade_code = ?, "
 				   + "	user_password = ?, "
-				   + "	user_name = ?"
+				   + "	user_name = ?, "
 				   + "	user_tel = ?, "
 				   + "	user_email = ?, "
+				   + "	user_email_subscription = ?, "
+				   + "	user_sms_subscription = ?, "
+				   + "	user_point = ?, "
 				   + "	user_updated_date = sysdate "
 				   + "where"
 				   + "	user_no = ? ";
 		
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setString(1, user.getPassword());
-		pstmt.setString(2, user.getName());
-		pstmt.setString(3, user.getTel());
-		pstmt.setString(4, user.getEmail());
-		pstmt.setInt(5, user.getNo());
+		pstmt.setString(1, user.getGradeCode());
+		pstmt.setString(2, user.getPassword());
+		pstmt.setString(3, user.getName());
+		pstmt.setString(4, user.getTel());
+		pstmt.setString(5, user.getEmail());
+		pstmt.setString(6, user.getEmailSubscription());
+		pstmt.setString(7, user.getSmsSubscription());
+		pstmt.setInt(8, user.getPoint());
+		pstmt.setInt(9, user.getNo());
 		
 		pstmt.executeUpdate();
 		

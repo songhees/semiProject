@@ -59,7 +59,7 @@
 		</div>
 		<!-- logo bar -->
 		<div id="#logoImg">
-	  		<a href="#"><img alt="" src="/semi-project/resources/images/home/vin.png" style="width: 302px;"></a>
+	  		<a href="/semi-project/index.jsp"><img alt="" src="/semi-project/resources/images/home/vin.png" style="width: 302px;"></a>
 		</div>
 		<!-- right side bar-->
 		<div style="overflow: hidden;">
@@ -80,17 +80,15 @@
 		<div class="collapse navbar-collapse justify-content-center" id="navbar-2">
 	      <!-- Left links -->
 			<ul class="navbar-nav mb-2 mb-lg-0">
-				<li class="nav-item"><a class="nav-link fw-bold" href="#">BEST</a></li>
 	      		<li class="nav-item"><a class="nav-link fw-bold" href="#">NEW<code class="text-danger">5%</code></a></li>
 	        <!-- Navbar dropdown -->
-	        	<li class="nav-item"><a class="nav-link" href="#">남녀공용</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">베스트재진행</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">OUTER</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">SHIRT&amp;BLOUSE</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">DRESS</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">SKIRT</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">PANTS</a></li>
-	        	<li class="nav-item"><a class="nav-link" href="#">전체상품</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=OUTER">OUTER</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=TOP">TOP</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=SHIRT">SHIRT&amp;BLOUSE</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=DRESS">DRESS</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=SKIRT">SKIRT</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=PANTS">PANTS</a></li>
+	        	<li class="nav-item"><a class="nav-link" href="/semi-project/product/list.jsp?category=전체상품">전체상품</a></li>
 			</ul>
 			<ul class="navbar-nav mb-2 mb-lg-0">
 				<li class="nav-item dropdown">
@@ -101,7 +99,7 @@
 			            <li><a class="dropdown-item" href="#">REVIEW</a></li>
 			        </ul>
 				</li>
-			</ul>
+			</ul>	
 	      <!-- Left links -->
 		</div>
     <!-- Collapsible wrapper -->

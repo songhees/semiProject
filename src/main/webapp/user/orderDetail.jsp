@@ -288,7 +288,7 @@
 					</tr>
 					<tr>
 						<th>주소</th>
-						<td><%=orderInfo.get("addressDetail") %></td>
+						<td><%=((String)orderInfo.get("baseAddress") + " " + (String)orderInfo.get("addressDetail")) %></td>
 					</tr>
 					<tr>
 						<th>휴대전화</th>

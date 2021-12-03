@@ -26,7 +26,7 @@ public class AddressDao {
 	 * @return 주소목록
 	 * @throws SQLException
 	 */
-	public List<Address> getAllAddressByNo(int userNo) throws SQLException {
+	public List<Address> getAllAddressByUserNo(int userNo) throws SQLException {
 		List<Address> addressList = new ArrayList<Address>();
 		String sql = "select address_no, user_no, address_name, postal_code, address_default, "
 				+ "address_detail, base_address "
@@ -45,7 +45,7 @@ public class AddressDao {
 			address.setUser(user);
 			
 			address.setAddressNo(rs.getInt("address_no"));
-			address.setName(rs.getString("address_name"));
+			address.setAddressName(rs.getString("address_name"));
 			address.setPostalCode(rs.getString("postal_code"));
 			address.setAddressDefault(rs.getString("address_default"));
 			address.setDetail(rs.getString("address_detail"));
@@ -65,7 +65,7 @@ public class AddressDao {
 	 * @return 대표 주소
 	 * @throws SQLException
 	 */
-	public Address getRepresentativeAddressByNo (int userNo) throws SQLException {
+	public Address getRepresentativeAddressByUserNo (int userNo) throws SQLException {
 		Address address = null;
 		String sql = "select address_no, user_no, address_name, postal_code, address_default, "
 				+ "address_detail, base_address "
@@ -83,7 +83,7 @@ public class AddressDao {
 			user.setNo(rs.getInt("user_no"));
 			address.setUser(user);
 			address.setAddressNo(rs.getInt("address_no"));
-			address.setName(rs.getString("address_name"));
+			address.setAddressName(rs.getString("address_name"));
 			address.setPostalCode(rs.getString("postal_code"));
 			address.setAddressDefault(rs.getString("address_default"));
 			address.setDetail(rs.getString("address_detail"));
@@ -101,16 +101,15 @@ public class AddressDao {
 	 * @return 주소지
 	 * @throws SQLException
 	 */
-	public Address getAddressByNo(int no) throws SQLException {
+	public Address getAddressByNo(int addressNo) throws SQLException {
 		Address address = null;
 		String sql = "select address_no, user_no, address_name, postal_code, address_default, "
 				+ "address_detail, base_address "
 				+ "from semi_user_address "
-				+ "where address_no = ? "
-				+ "and address_default = 'Y' ";
+				+ "where address_no = ? ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setInt(1, no);
+		pstmt.setInt(1, addressNo);
 		ResultSet rs = pstmt.executeQuery();
 		
 		if (rs.next()) {
@@ -119,7 +118,7 @@ public class AddressDao {
 			user.setNo(rs.getInt("user_no"));
 			address.setUser(user);
 			address.setAddressNo(rs.getInt("address_no"));
-			address.setName(rs.getString("address_name"));
+			address.setAddressName(rs.getString("address_name"));
 			address.setPostalCode(rs.getString("postal_code"));
 			address.setAddressDefault(rs.getString("address_default"));
 			address.setDetail(rs.getString("address_detail"));
@@ -132,7 +131,7 @@ public class AddressDao {
 	}
 	
 	/**
-	 * 유저 번호에 해당하는 주소정보를 수정
+	 * 주소 번호에 해당하는 주소정보를 수정
 	 * @param address 주소정보
 	 * @throws SQLException
 	 */
@@ -144,15 +143,15 @@ public class AddressDao {
 				+ "    address_default = ?, "
 				+ "    address_detail = ?, "
 				+ "	   base_address = ? "
-				+ "where user_no = ? ";
+				+ "where address_no = ? ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setString(1, address.getName());
+		pstmt.setString(1, address.getAddressName());
 		pstmt.setString(2, address.getPostalCode());
 		pstmt.setString(3, address.getAddressDefault());
 		pstmt.setString(4, address.getDetail());
 		pstmt.setString(5, address.getBaseAddress());
-		pstmt.setInt(6, address.getUser().getNo());
+		pstmt.setInt(6, address.getAddressNo());
 		pstmt.executeUpdate();
 		
 		pstmt.close();
@@ -172,11 +171,62 @@ public class AddressDao {
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
 		pstmt.setInt(1, address.getUser().getNo());
-		pstmt.setString(2, address.getName());
+		pstmt.setString(2, address.getAddressName());
 		pstmt.setString(3, address.getPostalCode());
 		pstmt.setString(4, address.getAddressDefault());
 		pstmt.setString(5, address.getDetail());
 		pstmt.setString(6, address.getBaseAddress());
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	public void deleteAddress(int no) throws SQLException {
+		String sql = "delete from semi_user_address "
+				+ "where address_no = ? ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, no);
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	/**
+	 * 유저번호에 해당하는 모든 주소지의 기본값을 N(기본)으로 바꾸는 sql
+	 * @param userNo 유저번호
+	 * @throws SQLException
+	 */
+	public void updateDefaultToN(int userNo) throws SQLException {
+		String sql = "update semi_user_address "
+				+ "set "
+				+ "	address_default = 'N' "
+				+ "where user_no = ? ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, userNo);
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	/**
+	 * 배송지번호에 해당하는 주소를 대표주소로 설정
+	 * @param addressNo 배송지번호
+	 * @throws SQLException
+	 */
+	public void updateDefault(int addressNo, String isDefault) throws SQLException {
+		String sql = "update semi_user_address "
+				+ "set "
+				+ "	address_default = ? "
+				+ "where address_no = ? ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setString(1, isDefault);
+		pstmt.setInt(2, addressNo);
 		pstmt.executeUpdate();
 		
 		pstmt.close();

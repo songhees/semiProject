@@ -94,7 +94,7 @@
 		번호를얻어서 주소록을 조회한다.
 	*/
 	User userInfo = userDao.getUserById("osh");
-	Address address = addressDao.getRepresentativeAddressByNo(userInfo.getNo());
+	Address address = addressDao.getRepresentativeAddressByUserNo(userInfo.getNo());
 
 	String[] tel = userInfo.getTel().split("-");
 %>

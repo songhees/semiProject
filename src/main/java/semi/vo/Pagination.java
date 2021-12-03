@@ -1,4 +1,5 @@
 package semi.vo;
+
 /**
  * 페이징처리를 지원하는 클래스다.<p>
  * <ul>
@@ -41,9 +42,57 @@ public class Pagination {
 	 * @param totalRecords 총 데이터 갯수
 	 */
 	public Pagination(String pageNo, int totalRecords, int setRowsPerPage, int setPagesPerBlock) {
-		rowsPerPage = setRowsPerPage;
-		pagesPerBlock = setPagesPerBlock;
+		this.rowsPerPage = setRowsPerPage;
+		this.pagesPerBlock = setPagesPerBlock;
+		this.totalRecords = totalRecords;
 		
+		// 총 페이지 갯수를 계산해서 멤버변수 totalPages에 대입한다.
+		totalPages = (int)(Math.ceil((double)totalRecords/rowsPerPage));
+		// 총 블록 갯수를 계산해서 멤버변수 totalBlocks에 대입한다.
+		totalBlocks = (int)(Math.ceil((double)totalPages/pagesPerBlock));
+		
+		// 현재 페이지번호를 계산한다.
+		currentPageNo = 1;
+		try {
+			currentPageNo = Integer.parseInt(pageNo);
+		} catch (NumberFormatException e) {}
+		
+		if (currentPageNo <= 0) {			// 숫자로 변환된 현재 페이지번호가 0이거나 0보다 작으면 현재 페이지번호를 1로 설정한다.
+			currentPageNo = 1;
+		}
+		if (currentPageNo > totalPages) {	// 숫자로 변환된 현재 페이지번호가 총 페이지갯수 보다 크면 현재 페이지번호를 totalPages로 설정한다.
+			currentPageNo = totalPages;
+		}
+		// 현재 페이지번호에 해당하는 데이터조회 시작 순번과 끝 순번을 계산해서 멤버변수에 대입한다.
+		begin = (currentPageNo - 1)*rowsPerPage + 1;
+		end = currentPageNo*rowsPerPage;
+
+		// 현재 페이지번호에 대한 현재 블록번호를 계산해서 멤버변수에 대입한다.
+		currentBlock = (int)(Math.ceil((double)currentPageNo/pagesPerBlock));
+		// 현재 블록 번호에 해당하는 시작페이지번호와 끝페이지번호를 계산해서 멤버변수에 대입한다.
+		beginPage = (currentBlock - 1)*pagesPerBlock + 1;
+		endPage = currentBlock*pagesPerBlock;
+		if (currentBlock == totalBlocks) {
+			endPage = totalPages;
+		}
+		
+		// 현재 페이지번호에 대한 이전 블록의 페이지번호를 계산해서 멤버변수에 대입한다.
+		if (currentBlock > 1) {
+			prevPage = (currentBlock - 1)*pagesPerBlock;
+		}
+		// 현재 페이지번호에 대한 다음 블록의 페이지번호를 계산해서 멤버변수에 대입한다.
+		if (currentBlock < totalBlocks) {
+			nextPage = currentBlock*pagesPerBlock + 1;
+		}
+	}
+	
+	/**
+	 * 페이지번호와 총 데이터 갯수를 전달받아서 Pagination객체를 초기화한다.<p>
+	 * 페이징처리에 필요한 모든 값을 계산해서 멤버변수에 저장한다.
+	 * @param pageNo 요청한 페이지 번호
+	 * @param totalRecords 총 데이터 갯수
+	 */
+	public Pagination(String pageNo, int totalRecords) {
 		// 총 페이지 갯수를 계산해서 멤버변수 totalPages에 대입한다.
 		totalPages = (int)(Math.ceil((double)totalRecords/rowsPerPage));
 		// 총 블록 갯수를 계산해서 멤버변수 totalBlocks에 대입한다.

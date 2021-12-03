@@ -3,7 +3,7 @@ package semi.vo;
 public class Address {
 	private int addressNo;
 	private User user;
-	private String name;
+	private String addressName;
 	private String postalCode;
 	private String addressDefault;
 	private String detail;
@@ -27,12 +27,12 @@ public class Address {
 		this.user = user;
 	}
 
-	public String getName() {
-		return name;
+	public String getAddressName() {
+		return addressName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setAddressName(String addressName) {
+		this.addressName = addressName;
 	}
 
 	public String getPostalCode() {

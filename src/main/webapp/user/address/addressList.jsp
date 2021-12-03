@@ -37,7 +37,7 @@
 	}
 	
 	button.button, a.button  {
-		padding: 11px 3px;
+		padding: 9px 3px;
 		border-radius: 0;
 		width: 100px;
 		height: 35px;
@@ -52,29 +52,42 @@
 		font-weight: bold;
 		font-size: 13px;
 	}
-	a.btn-sm {
+	a.small, button.small {
 		font-size: 11px;
 		width: 40px;
 		border: 1px solid #e3e3e3;
 		color: #757575;
+		border-radius: 0;
 	}
 </style>
 </head>
 <body>
-<%@ include file="../common/navbar.jsp" %>
+<%@ include file="../../common/navbar.jsp" %>
 <%
 /* 로그인 없이 이 페이지에 접근하는 경우 */
 /* 	if (loginUserInfo == null) {
 	response.sendRedirect("loginform.jsp");		
 	return;
 } */
+	String error = request.getParameter("error");
 
 	AddressDao addressDao = AddressDao.getInstance();
 /* 검색 조건 */
 /* login.jsp 완성시  loginUserInfo.getNo() 넣기*/
-	List<Address> addressList = addressDao.getAllAddressByNo(10000);
+	List<Address> addressList = addressDao.getAllAddressByUserNo(10000);
+	StringBuffer str = new StringBuffer();
 %>
 <div class="container">    
+<%
+	/* 경고창구현하기 */
+	if ("deny-delete".equals(error)) {
+%>
+		<div class="alert alert-danger">
+			<small>사용자가 다른 주소록 입니다.</small>
+		</div>
+<%
+	}
+%>
 	<div class="row">
 		<div class="col">
 			<!-- 브레드크럼 breadcrumb -->
@@ -96,54 +109,67 @@
 	</div>	
 	<div class="row mt-5">
 		<div class="col">
-			<table id="vintable">
-				<colgroup>
-					<col width="2%">
-					<col width="10%">
-					<col width="10%">
-					<col width="10%">
-					<col width="*%">
-					<col width="10%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th><input type="checkbox"></th>
-						<th>기본 주소</th>
-						<th>배송지명</th>
-						<th>수령인</th>
-						<th>주소</th>
-						<th>수정</th>
-					</tr>
-				</thead>
-				<tbody>
+			<form action="addressDelete.jsp" method="get">
+				<table id="vintable">
+					<colgroup>
+						<col width="2%">
+						<col width="10%">
+						<col width="10%">
+						<col width="10%">
+						<col width="*%">
+						<col width="10%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th><input type="checkbox" id="ck-all" onchange="toggleCheckbox()"></th>
+							<th>기본 주소</th>
+							<th>배송지명</th>
+							<th>수령인</th>
+							<th>주소</th>
+							<th>수정</th>
+						</tr>
+					</thead>
+					<tbody>
 <%
 	for (Address address : addressList) {
 %>
-					<tr>
-						<td><input type="checkbox"></td>
-						<td></td>
-						<td><%=address.getName() %></td>
-						<td><%="오송희" /*=loginUserInfo.getName  */ %></td>
-						<td></td>
-						<td><a class="btn btn-sm" href="addressForm.jsp?no=<%=address.getAddressNo() %>">수정</a></td>
-					</tr>
+						<tr>
+							<td><input type="checkbox" name="no" value="<%=address.getAddressNo() %>" id="ck"></td>
 <%
-	}
+		if ("Y".equals(address.getAddressDefault())) {
 %>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="row mt-2">
-		<div class="col">
-			<button class="button btn btn-outline-dark">선택 주소록 삭제</button>
-		</div>
-		<div class="col text-end">
-			<a class="button btn btn-dark opacity-75">배송지 등록</a>
+							<td><a class="small btn btn-sm" href="default.jsp?menu=release&no=<%=address.getAddressNo() %>">해제</a></td>
+<%
+		} else {
+%>
+							<td><a class="small btn btn-sm btn-secondary" href="default.jsp?menu=fix&no=<%=address.getAddressNo() %>" style="color: white;">고정</a></td>
+<%
+		}
+%>
+							<td><%=address.getAddressName() %></td>
+							<td><%="오송희" /*=loginUserInfo.getName  */ %></td>
+							<td class="text-start"><%=str.append("(").append(address.getPostalCode()).append(")").append(address.getBaseAddress()).append(" ").append(address.getDetail()) %></td>
+							<td><a class="small btn btn-sm" href="addressForm.jsp?no=<%=address.getAddressNo() %>">수정</a></td>
+						</tr>
+	<%
+			str.setLength(0);
+		}
+	%>
+					</tbody>
+				</table>
+				<div class="row mt-2">
+					<div class="col">
+						<button class="button btn btn-outline-dark" >선택 주소록 삭제</button>
+					</div>
+					<div class="col text-end">
+						<a href="addressForm.jsp" class="button btn btn-dark opacity-75">배송지 등록</a>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<!-- 이용안내 메세지 -->
-	<div id="guidance" class="my-5 border row">
+	<div id="guidance" class="my-5 border">
 		<h3 class="border-bottom p-2" style="background-color: #fbfafa;">배송주소록 유의사항</h3>
 		<div class="p-1">
 			<ol>
@@ -155,5 +181,17 @@
 	</div>	
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+	function toggleCheckbox() {
+		var checkBoxAll = document.querySelector("#ck-all")
+		var checkBoxes = document.querySelectorAll("#vintable tbody input[name=no]")
+		
+		for (var i=0; i<checkBoxes.length; i++) {
+			
+			var checkBox = checkBoxes[i];
+			checkBox.checked = checkBoxAll.checked;
+		}
+	}
+</script>
 </body>
 </html>

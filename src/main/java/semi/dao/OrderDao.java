@@ -49,6 +49,12 @@ public class OrderDao {
 				+ "			where u.user_id = ? ";
 		if ("cancel".equals(criteria.getStatus())) {
 			sql += "			and o.order_status in ('취소', '반품', '교환') ";
+		} else if ("return".equals(criteria.getStatus())) {
+			sql += "			and o.order_status = '반품' ";
+		} else if ("change".equals(criteria.getStatus())) {
+			sql += "			and o.order_status = '교환' ";
+		} else if ("can".equals(criteria.getStatus())) {
+			sql += "			and o.order_status = '취소' ";
 		} else {
 			sql += "			and o.order_status = '주문완료' ";
 		}
@@ -220,4 +226,62 @@ public class OrderDao {
 		return orderDetail;
 	}
 	
+	/**
+	 * 유저번호에 해당하는 주문 총 금액과, 주문 수
+	 * @param userNo
+	 * @return
+	 * @throws SQLException
+	 */
+	public int[] getTotalAmount(int userNo) throws SQLException {
+		int[] totalAmount = new int[2];
+		String sql = "select sum(total_price) sum, count(*) cnt "
+				+ "from semi_order "
+				+ "where user_no = ? "
+				+ "and order_status = '주문완료' ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, userNo);
+		ResultSet rs = pstmt.executeQuery();
+		
+		if (rs.next()) {
+			totalAmount[0] = rs.getInt("sum");
+			totalAmount[1] = rs.getInt("cnt");
+		}
+		
+		rs.close();
+		pstmt.close();
+		connection.close();
+		
+		return totalAmount;
+	}
+	
+	/**
+	 * 유저번호와 주문상태에 해당하는 주문상품 개수 조회
+	 * @param userNo 유저 번호
+	 * @param status 주문 상태
+	 * @return 주문 개수
+	 * @throws SQLException
+	 */
+	public int getOrderItemAmount(int userNo, String status) throws SQLException {
+		int amount = 0;
+		String sql = "select sum(i.order_product_quantity) sum "
+				+ "from semi_order o, semi_order_item i "
+				+ "where user_no = ? "
+				+ "and order_status = ? "
+				+ "and o.order_no = i.order_no ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, userNo);
+		pstmt.setString(2, status);
+		ResultSet rs = pstmt.executeQuery();
+		
+		rs.next();
+		amount = rs.getInt("sum");
+		
+		rs.close();
+		pstmt.close();
+		connection.close();
+		
+		return amount;
+	}
 }

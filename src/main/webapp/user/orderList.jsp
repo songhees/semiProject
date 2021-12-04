@@ -118,7 +118,7 @@
 	}
 	
 	int totalRecords = orderDao.getTotalRecords(criteria);
-	Pagination pagination = new Pagination(pageNo, totalRecords, 1, 5);
+	Pagination pagination = new Pagination(pageNo, totalRecords, 5, 5);
 	
 	criteria.setBegin(pagination.getBegin());
 	criteria.setEnd(pagination.getEnd());
@@ -145,7 +145,7 @@
 		<ul class="nav nav-tabs nav-justified border">
 		    <li class="nav-item"><a class="nav-link <%="order".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'order')">주문내역조회</a></li>
 		    <!-- 주문 상태가 취소/반품/교환 인 상품의 목록으로 이동하는 버튼 -->
-		    <li class="nav-item"><a class="nav-link <%="cancel".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'cancel')">취소/반품/교환내역</a></li>
+		    <li class="nav-item"><a class="nav-link <%="cancel".equals(subMenu) || "change".equals(subMenu) || "return".equals(subMenu) || "can".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'cancel')">취소/반품/교환내역</a></li>
 		    <!-- 년도별 주문내역 조회 -->
 		    <li class="nav-item"><a class="nav-link <%="history".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'history')">과거주문내역</a></li>
 	    	<li class="nav-item"><a class="nav-link disabled" href="#"></a></li>

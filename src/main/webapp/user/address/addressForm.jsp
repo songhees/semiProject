@@ -130,7 +130,7 @@
 	<div class="row">
 		<!-- 주문정보 table -->
 		<div class="col my-5">
-			<form id="loginForm" action="register.jsp" method="post" onsubmit="checkInputField(event)">
+			<form id="addressForm" action="register.jsp" method="post" onsubmit="checkInputField(event)">
 				<input type="hidden" name="no" value="<%=addressNo %>">
 				<table class="vintable">
 					<tbody>
@@ -184,7 +184,7 @@
 <%		
 	}
 %>
-					<a href="../../index.jsp" class="btn btn-outline-secondary" >취소</a>
+					<a href="addressList.jsp" class="btn btn-outline-secondary" >취소</a>
 				</div>
 			</form>
 		</div>
@@ -206,7 +206,7 @@
 <script>
 	function checkInputField(event) {
 		event.preventDefault();
-		var form = document.getElementById("loginForm");
+		var form = document.getElementById("addressForm");
 		
 		
 		var name = document.getElementById("name").value
@@ -232,7 +232,7 @@
 		}
 		
 		if (inValid) {
-			form.submit
+			form.submit();
 		}
 	}
 	

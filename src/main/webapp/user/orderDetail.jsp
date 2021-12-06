@@ -91,15 +91,15 @@
 <%
 	int orderNo = Integer.parseInt(request.getParameter("orderNo"));
 
-/* 로그인 없이 이 페이지에 접근하는 경우 */
-/* 	if (loginUserInfo == null) {
+	/* 로그인 없이 이 페이지에 접근하는 경우 */
+	if (loginUserInfo == null) {
 		response.sendRedirect("loginform.jsp");		
 		return;
-	} */
+	}
+	
 	OrderDao orderDao = OrderDao.getinstance();
 
-	/* login.jsp 완성시  loginUserInfo.getId() 넣기*/
-	Map<String, Object> orderInfo = orderDao.getOrderInfo("osh", orderNo);
+	Map<String, Object> orderInfo = orderDao.getOrderInfo(loginUserInfo.getNo(), orderNo);
 	List<OrderItemDto> orderItems = orderDao.getOrderItemDetail(orderNo);
 	
 	/* 상품가격으로 배송비여부 판단하기 */
@@ -118,8 +118,8 @@
 	<div>
 		<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 		  <ol class="breadcrumb justify-content-end">
-		    <li class="breadcrumb-item"><a href="#">HOME</a></li>
-		    <li class="breadcrumb-item"><a href="#">MY PAGE</a></li>
+		    <li class="breadcrumb-item"><a href="../index.jsp">HOME</a></li>
+		    <li class="breadcrumb-item"><a href="mypage.jsp">MY PAGE</a></li>
 		    <li class="breadcrumb-item active" aria-current="page">ORDER</li>
 		  </ol>
 		</nav>

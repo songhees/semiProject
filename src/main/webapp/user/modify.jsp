@@ -9,17 +9,16 @@
 	User loginUserInfo = (User)session.getAttribute("LOGIN_USER_INFO");
 
 	// 로그인되어 있지 않는 유저일 경우
-/* 	if (loginUserInfo == null) {
+	if (loginUserInfo == null) {
 		response.sendRedirect("../loginform.jsp");		
 		return;
-	} */
+	}
 
 	String userId = request.getParameter("userId");
-
 	// 로그인한 유저와 수정할 유저의 아이디비교
-	/* if (userId.equals(loginUserInfo.getId())) {
+	if (!userId.equals(loginUserInfo.getId())) {
 		response.sendRedirect("../index.jsp");		
-	} */
+	}
 	
 	// 폼으로 부터 받아온 data
 	String password = DigestUtils.sha256Hex(request.getParameter("userPassword"));
@@ -32,15 +31,10 @@
 	String email = request.getParameter("userEmail");
 	String emailSubscription = request.getParameter("emailSubscription");
 	
-	// id로 부터 유저정보를 불러와 수정된 값을 대입
-	UserDao userDao = UserDao.getInstance();
-	/* "osh" -> userId 로 고치기 */
-	User user = userDao.getUserById("osh");
-	
 	AddressDao addressDao = AddressDao.getInstance();
+
 	// 가저온 유저정보의 번호에 해당하는 대표 주소를 가져온다.
-	Address address = null;
-	address = addressDao.getRepresentativeAddressByUserNo(user.getNo());
+	Address address = addressDao.getRepresentativeAddressByUserNo(loginUserInfo.getNo());
 	
 	String postCode = request.getParameter("postcode");
 	String baseAddress = request.getParameter("baseAddress");
@@ -54,8 +48,7 @@
 		addressDao.updateAddress(address);
 	} else {
 		// 기존에 없던 주소면 insert하여 넣는다.
-		address = new Address();
-		address.setUser(user);
+		address.setUser(loginUserInfo);
 		address.setAddressName("미지정");
 		address.setPostalCode(postCode);
 		address.setAddressDefault("Y");
@@ -64,14 +57,15 @@
 		addressDao.insertAddress(address);
 	}
 	
-	user.setPassword(password);
-	user.setName(name);
-	user.setTel(tel);
-	user.setSmsSubscription(smsSubscription);
-	user.setEmail(email);
-	user.setEmailSubscription(emailSubscription);
+	loginUserInfo.setPassword(password);
+	loginUserInfo.setName(name);
+	loginUserInfo.setTel(tel);
+	loginUserInfo.setSmsSubscription(smsSubscription);
+	loginUserInfo.setEmail(email);
+	loginUserInfo.setEmailSubscription(emailSubscription);
 	
- 	userDao.updateUser(user);
+	UserDao userDao = UserDao.getInstance();
+ 	userDao.updateUser(loginUserInfo);
 	
 	response.sendRedirect("../index.jsp");
 %>

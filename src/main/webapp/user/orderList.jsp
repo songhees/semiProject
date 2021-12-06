@@ -26,7 +26,7 @@
     <title></title>
 <style type="text/css">
 
-	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover {
+	li.breadcrumb-item, .breadcrumb-item a, .breadcrumb-item a:hover , a.nav-link, a.nav-link:hover, a.hover {
 		text-decoration: none;
 		color: #757575;
 		font-size: 14px;
@@ -41,7 +41,6 @@
     	text-align: center;
 	    font-size: 14px;
 	}
-
 	table {
 	    text-align: center;
 		width: 100%;
@@ -51,18 +50,23 @@
 		width: 80px;
 		height: 100px;
 	}
-	
 	table tr {
 		border-top: 1px solid #e3e3e3;
 		border-bottom: 1px solid #e3e3e3;
 	}
+	
 	.nav > li > a.active {
     	background-color: #404040 !important;
     	color: white !important;
 	}
-	
 	.nav > li {
     	border-right: 1px solid #ebebeb;
+    	background-color: #FFFAFA;
+	}
+	
+	.btn-group button.btn {
+		font-size: 11px;
+		padding: 3px;
 	}
 	
 	a.page-link {
@@ -86,52 +90,51 @@
 </style>
 </head>
 <body>
-<!-- 굳이 status에 대해 나눌 필요없이 subMenu로 나누면된다 -> 코드 줄임 -->
 <%@ include file="../common/navbar.jsp" %>
 <%
 	String pageNo = StringUtils.defaultString(request.getParameter("page"), "1");
 	String subMenu = StringUtils.defaultString(request.getParameter("subMenu"), "order");
 	
 	/* 로그인 없이 이 페이지에 접근하는 경우 */
-/* 	if (loginUserInfo == null) {
-		response.sendRedirect("loginform.jsp");		
+	if (loginUserInfo == null) {
+		response.sendRedirect("../loginform.jsp");		
 		return;
-	} */
+	}
 
 	OrderDao orderDao = OrderDao.getinstance();
 	OrderItemCriteria criteria = new OrderItemCriteria();
+	
 	/* 검색 조건 */
-	/* login.jsp 완성시  loginUserInfo.getId() 넣기*/
-	criteria.setUserId("osh");
+	criteria.setUserNo(loginUserInfo.getNo());
 	criteria.setStatus(subMenu);
 	
 	int period = NumberUtils.toInt(request.getParameter("period"), 3);
 	criteria.setBeginDate(criteria.getPeriod(period)[0]);
 	criteria.setEndDate(criteria.getPeriod(period)[1]);
 	
-	int nowYear = Calendar.getInstance().get(Calendar.YEAR)-1;
-	int year = NumberUtils.toInt(request.getParameter("year"), nowYear);;
-	/* "subMenu" 가 뭔지에 따라  orderDao.getOrderItemListByUserId의 매개 변수를 다르게 한다.*/
+	int previousYear = Calendar.getInstance().get(Calendar.YEAR)-1;
+	int year = NumberUtils.toInt(request.getParameter("year"), previousYear);;
+	/* "subMenu" 가 뭔지에 따라  orderDao.getOrderItemListByUserNo의 매개 변수를 다르게 한다.*/
 	if ("history".equals(subMenu)) {
 		criteria.setBeginDate(year + "/01/01");
 		criteria.setEndDate((year+1) + "/01/01");
 	}
 	
 	int totalRecords = orderDao.getTotalRecords(criteria);
-	Pagination pagination = new Pagination(pageNo, totalRecords, 5, 5);
+	Pagination pagination = new Pagination(pageNo, totalRecords, 1, 5);
 	
 	criteria.setBegin(pagination.getBegin());
 	criteria.setEnd(pagination.getEnd());
 
-	List<OrderItemDto> itemList = orderDao.getOrderItemListByUserId(criteria);
+	List<OrderItemDto> itemList = orderDao.getOrderItemListByUserNo(criteria);
 %>
 <div class="container">    
 	<!-- 브레드크럼 breadcrumb -->
 	<div>
 		<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 		  <ol class="breadcrumb justify-content-end">
-		    <li class="breadcrumb-item"><a href="#">HOME</a></li>
-		    <li class="breadcrumb-item"><a href="#">MY PAGE</a></li>
+		    <li class="breadcrumb-item"><a href="../index.jsp">HOME</a></li>
+		    <li class="breadcrumb-item"><a href="mypage.jsp">MY PAGE</a></li>
 		    <li class="breadcrumb-item active" aria-current="page">ORDER</li>
 		  </ol>
 		</nav>
@@ -140,12 +143,12 @@
 	<div class="text-center mt-5">
 		<h5><strong>ORDER</strong></h5>
 	</div>
-	<!-- 주문상태 tabs subMenu -->
-	<div class="mt-5" style="background-color: #FFFAFA">
+	<!-- 주문상태 TABs subMenu -->
+	<div class="mt-5">
 		<ul class="nav nav-tabs nav-justified border">
 		    <li class="nav-item"><a class="nav-link <%="order".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'order')">주문내역조회</a></li>
 		    <!-- 주문 상태가 취소/반품/교환 인 상품의 목록으로 이동하는 버튼 -->
-		    <li class="nav-item"><a class="nav-link <%="cancel".equals(subMenu) || "change".equals(subMenu) || "return".equals(subMenu) || "can".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'cancel')">취소/반품/교환내역</a></li>
+		    <li class="nav-item"><a class="nav-link <%="cancel".equals(subMenu) || "change".equals(subMenu) || "return".equals(subMenu) || "exchange".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'change')">취소/반품/교환내역</a></li>
 		    <!-- 년도별 주문내역 조회 -->
 		    <li class="nav-item"><a class="nav-link <%="history".equals(subMenu)? "active" : ""%>" href="" onclick="searchSubMenu(event, 'history')">과거주문내역</a></li>
 	    	<li class="nav-item"><a class="nav-link disabled" href="#"></a></li>
@@ -163,21 +166,21 @@
 <%
 		for (int i = 0 ; i < 5; i++) {
 %>
-				<option value="<%=nowYear-i %>" <%=year == (nowYear-i) ? "selected" : "" %>> <%=nowYear-i %> 년</option>
+				<option value="<%=previousYear-i %>" <%=year == (previousYear-i) ? "selected" : "" %>> <%=previousYear-i %> 년</option>
 <%
 		}
 %>
 			</select>
-			<button class="btn btn-dark btn-sm opacity-75 my-1" type="button"  onclick="changeYear()">조회</button>
+			<button class="btn btn-dark btn-sm opacity-75 my-1" type="submit">조회</button>
 <%
 	} else {
 %>
 			<input type="hidden" id="period-field" name="period" value="<%=period %>" >
-			<div class="btn-group btn-group-sm p-3">
-			  	<a class="btn btn-outline-secondary <%=period == 0 ? "active" : ""  %>" href="" onclick="changePeriod(event, 0)">오늘</a>
-				<a class="btn btn-outline-secondary <%=period == 1 ? "active" : ""  %>" href="" onclick="changePeriod(event, 1)">1개월</a>
-				<a class="btn btn-outline-secondary <%=period == 3 ? "active" : ""  %>" href="" onclick="changePeriod(event, 3)">3개월</a>
-				<a class="btn btn-outline-secondary <%=period == 6 ? "active" : ""  %>" href="" onclick="changePeriod(event, 6)">6개월</a>
+			<div class="btn-group btn-group-sm p-3" style="width: 200px;">
+			  	<button class="btn btn-outline-secondary <%=period == 0 ? "active" : ""  %>" onclick="changePeriod(event, 0)">오늘</button>
+				<button class="btn btn-outline-secondary <%=period == 1 ? "active" : ""  %>" onclick="changePeriod(event, 1)">1개월</button>
+				<button class="btn btn-outline-secondary <%=period == 3 ? "active" : ""  %>" onclick="changePeriod(event, 3)">3개월</button>
+				<button class="btn btn-outline-secondary <%=period == 6 ? "active" : ""  %>" onclick="changePeriod(event, 6)">6개월</button>
 			</div>
 		</form>
 <%
@@ -200,11 +203,11 @@
 	<div>
 		<table>
 			<colgroup>
-				<col width="9%">
+				<col width="10%">
 				<col width="8%">
 				<col width="*%">
 				<col width="8%">
-				<col width="8%">
+				<col width="10%">
 				<col width="9%">
 			</colgroup>
 			<thead  style="border-top: 1px solid #e3e3e3; background-color: #fbfafa;">
@@ -301,37 +304,28 @@
 	</div>
 <%
 	}
-/* 	period-field" name="period" >
-	<input type="hidden" id="page-field" name="page" value="1" >
-	<input type="hidden" id="subMenu-field" name="subMenu" > */
 %>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
+
+	var form = document.getElementById("form-search");
+	
 	function toMovePage(event, pageNo) {
 		event.preventDefault();
-		searchOrder(pageNo)
+		document.getElementById("page-field").value = pageNo
+		form.submit();
 	}
 	
 	function changePeriod(event, period) {
 		event.preventDefault();
 		document.getElementById("period-field").value = period
-		searchOrder(1) 
-	}
-	
-	function changeYear() {
-		searchOrder(1) 
+		form.submit();
 	}
 	
 	function searchSubMenu(event, subMenu) {
 		event.preventDefault();
 		document.getElementById("subMenu-field").value = subMenu
-		searchOrder(1)
-	}
-	
-	function searchOrder(page) {
-		document.getElementById("page-field").value = page;
-		var form = document.getElementById("form-search");
 		form.submit();
 	}
 	

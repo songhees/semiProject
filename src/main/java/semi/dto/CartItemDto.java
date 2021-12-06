@@ -6,6 +6,7 @@ public class CartItemDto {
 	private int userNo;
 	private int quantity;
 	// ProductItem
+	private int stock;
 	private int productItemNo;
 	private String size;
 	private String color;
@@ -35,6 +36,14 @@ public class CartItemDto {
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 
 	public int getProductItemNo() {
@@ -125,4 +134,21 @@ public class CartItemDto {
 		this.thumbnailUrl = thumbnailUrl;
 	}
 
+	public long getRealPrice(CartItemDto item) {
+		long productPrice = 0;
+		
+		if (item.getDiscountFrom() != null && item.getDiscountTo() != null) {
+			long now = System.currentTimeMillis();
+			
+			if (item.getDiscountFrom().getTime() <= now && now <= item.getDiscountTo().getTime()) {
+				productPrice = item.getDiscountPrice();
+			} else {
+				productPrice = item.getPrice();
+			}
+			
+		} else {
+			productPrice = item.getPrice();
+		}
+		return productPrice;
+	}
 }

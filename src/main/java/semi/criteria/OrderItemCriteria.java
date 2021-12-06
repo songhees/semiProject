@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class OrderItemCriteria {
 
-	private String userId;
+	private int userNo;
 	private String beginDate;
 	private String endDate;
 	private int begin;
@@ -14,12 +14,12 @@ public class OrderItemCriteria {
 	
 	public OrderItemCriteria() {}
 
-	public String getUserId() {
-		return userId;
+	public int getUserNo() {
+		return userNo;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserNo(int userNo) {
+		this.userNo = userNo;
 	}
 
 	public String getBeginDate() {

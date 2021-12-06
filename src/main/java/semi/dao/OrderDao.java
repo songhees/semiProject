@@ -32,7 +32,7 @@ public class OrderDao {
 	 * @return	주문 목록
 	 * @throws SQLException 
 	 */
-	public List<OrderItemDto> getOrderItemListByUserId(OrderItemCriteria criteria) throws SQLException {
+	public List<OrderItemDto> getOrderItemListByUserNo(OrderItemCriteria criteria) throws SQLException {
 		List<OrderItemDto> orderItemList = new ArrayList<>();
 		String sql = "select order_no, total_price, order_status, order_created, "
 				+ "		order_product_price, order_product_quantity, "
@@ -45,22 +45,21 @@ public class OrderDao {
 				+ "			t.product_item_no, t.product_color, t.product_size, "
 				+ "			p.product_no, p.product_name, "
 				+ "			s.thumbnail_image_url "
-				+ "			from semi_user u, semi_order o, semi_order_item i, semi_product_item t, semi_product p, semi_product_thumbnail_image s "
-				+ "			where u.user_id = ? ";
-		if ("cancel".equals(criteria.getStatus())) {
+				+ "			from semi_order o, semi_order_item i, semi_product_item t, semi_product p, semi_product_thumbnail_image s "
+				+ "			where o.user_no = ? ";
+		if ("change".equals(criteria.getStatus())) {
 			sql += "			and o.order_status in ('취소', '반품', '교환') ";
 		} else if ("return".equals(criteria.getStatus())) {
 			sql += "			and o.order_status = '반품' ";
-		} else if ("change".equals(criteria.getStatus())) {
+		} else if ("exchange".equals(criteria.getStatus())) {
 			sql += "			and o.order_status = '교환' ";
-		} else if ("can".equals(criteria.getStatus())) {
+		} else if ("cancel".equals(criteria.getStatus())) {
 			sql += "			and o.order_status = '취소' ";
 		} else {
 			sql += "			and o.order_status = '주문완료' ";
 		}
 		    sql += "         and o.order_created >= ? and o.order_created < ? "
 		    	+ "			and s.thumbnail_image_url=p.product_no || '_1.jpg' "
-				+ "			and u.user_no=o.user_no "
 				+ "			and o.order_no=i.order_no "
 				+ "			and i.product_item_no=t.product_item_no "
 				+ "			and p.product_no=t.product_no "
@@ -68,7 +67,7 @@ public class OrderDao {
 				+ "where rn >= ? and rn <= ? ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setString(1, criteria.getUserId());
+		pstmt.setInt(1, criteria.getUserNo());
 		pstmt.setString(2, criteria.getBeginDate());
 		pstmt.setString(3, criteria.getEndDate());
 		pstmt.setInt(4, criteria.getBegin());
@@ -111,19 +110,18 @@ public class OrderDao {
 	public int getTotalRecords(OrderItemCriteria criteria) throws SQLException {
 		int totalRecords = 0;
 		String sql = "select count(*) cnt "
-				+ "from semi_user u, semi_order o, semi_order_item i "
-				+ "where user_id = ? ";
-		if ("cancel".equals(criteria.getStatus())) {
+				+ "from semi_order o, semi_order_item i "
+				+ "where o.user_no = ? ";
+		if ("change".equals(criteria.getStatus())) {
 			sql += "and o.order_status in ('취소', '반품', '교환') ";
 		} else {
 			sql += "and o.order_status = '주문완료' ";
 		}
 		    sql += "and o.order_created >= ? and o.order_created < ? "
-		    	+ "and u.user_no=o.user_no "
 				+ "and o.order_no=i.order_no ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setString(1, criteria.getUserId());
+		pstmt.setInt(1, criteria.getUserNo());
 		pstmt.setString(2, criteria.getBeginDate());
 		pstmt.setString(3, criteria.getEndDate());
 		
@@ -145,15 +143,14 @@ public class OrderDao {
 	 */
 	public List<OrderItemDto> getOrderItemDetail(int orderNo) throws SQLException {
 		List<OrderItemDto> itemsInfo = new ArrayList<>();
-		String sql = "select o.order_no, "
+		String sql = "select i.order_no, "
 				+ "     i.order_product_price, i.order_product_quantity, "
 				+ "		t.product_item_no, t.product_color, t.product_size, "
 				+ "		p.product_no, p.product_name, "
 				+ "		s.thumbnail_image_url "
-				+ "from semi_order o, semi_order_item i, semi_product_item t, semi_product p, semi_product_thumbnail_image s "
-				+ "where o.order_no = ? "
+				+ "from semi_order_item i, semi_product_item t, semi_product p, semi_product_thumbnail_image s "
+				+ "where i.order_no = ? "
 				+ "and s.thumbnail_image_url = p.product_no || '_1.jpg' "
-				+ "and o.order_no = i.order_no "
 				+ "and i.product_item_no = t.product_item_no "
 				+ "and p.product_no = t.product_no "
 				+ "and s.product_no = p.product_no ";
@@ -190,24 +187,23 @@ public class OrderDao {
 	 * @return 주문정보
 	 * @throws SQLException
 	 */
-	public Map<String, Object> getOrderInfo(String userId, int orderNo) throws SQLException {
+	public Map<String, Object> getOrderInfo(int userNo, int orderNo) throws SQLException {
 		Map<String, Object> orderDetail = null;
-		String sql = "select u.user_id, u.user_name, u.user_tel, "
+		String sql = "select u.user_name, u.user_tel, "
 				+ "o.order_no, o.total_price, o.order_status, o.order_created, o.payment_method, "
 				+ "o.order_postal_code, o.address_detail, o.base_address "
 				+ "from semi_user u, semi_order o "
-				+ "where u.user_id = ? "
+				+ "where u.user_no = ? "
 				+ "and o.order_no = ? "
 				+ "and u.user_no=o.user_no ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setString(1, userId);
+		pstmt.setInt(1, userNo);
 		pstmt.setInt(2, orderNo);
 		
 		ResultSet rs = pstmt.executeQuery();
 		if (rs.next()) {
 			orderDetail = new HashMap<>();
-			orderDetail.put("userid", rs.getString("user_id"));
 			orderDetail.put("userName", rs.getString("user_name"));
 			orderDetail.put("userTel", rs.getString("user_tel"));
 			orderDetail.put("orderNo", rs.getInt("order_no"));

@@ -19,10 +19,16 @@ public class CartDao {
 		return self;
 	}
 	
+	/**
+	 * 유저 번호에 해당하는 cart에 담은 상품정보를 조회
+	 * @param userNo 유저 번호
+	 * @return 상품정보
+	 * @throws SQLException
+	 */
 	public List<CartItemDto> getCartItemList(int userNo) throws SQLException {
 		List<CartItemDto> items = new ArrayList<CartItemDto>();
 		String sql = "select c.user_no, c.product_item_no, c.cart_product_quantity, "
-				+ "        i.product_size, i.product_color, i.product_no, "
+				+ "        i.product_size, i.product_color, i.product_no, i.product_stock, "
 				+ "        p.product_name, p.product_price, p.product_discount_price, "
 				+ "		   p.product_discount_from, p.product_discount_to, p.product_on_sale, "
 				+ "        t.thumbnail_image_url "
@@ -42,6 +48,7 @@ public class CartDao {
 			item.setUserNo(rs.getInt("user_no"));
 			item.setQuantity(rs.getInt("cart_product_quantity"));
 			item.setProductItemNo(rs.getInt("product_item_no"));
+			item.setStock(rs.getInt("product_stock"));
 			item.setSize(rs.getString("product_size"));
 			item.setColor(rs.getString("product_color"));
 			item.setProductNo(rs.getInt("product_no"));
@@ -58,5 +65,42 @@ public class CartDao {
 		pstmt.close();
 		connection.close();
 		return items;
+	}
+	
+	/**
+	 *  유저 번호에 해당하는 장바구니에 담긴 상품수량을 변경
+	 * @param amount 수량
+	 * @param userNo 유저 번호
+	 * @throws SQLException
+	 */
+	public void updateCartItem(CartItemDto item) throws SQLException {
+		String sql = "update semi_cart_item "
+				+ "set "
+				+ "	cart_product_quantity = ? "
+				+ "where user_no = ? "
+				+ "and product_item_no = ? ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, item.getQuantity());
+		pstmt.setInt(2, item.getUserNo());
+		pstmt.setInt(3, item.getProductItemNo());
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	public void deleteCartItem(int userNo, int itemNo) throws SQLException {
+		String sql = "delete from semi_cart_item "
+				+ "where user_no = ? "
+				+ "and product_item_no = ? ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, userNo);
+		pstmt.setInt(2, itemNo);
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
 	}
 }

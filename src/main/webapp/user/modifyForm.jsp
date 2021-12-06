@@ -82,21 +82,17 @@
 <%@ include file="../common/navbar.jsp" %>
 <%
 /* 로그인 없이 이 페이지에 접근하는 경우 */
-/* 	if (loginUserInfo == null) {
+	if (loginUserInfo == null) {
 		response.sendRedirect("loginform.jsp");		
 		return;
-	} */
+	}
 
 	UserDao userDao = UserDao.getInstance();
 	AddressDao addressDao = AddressDao.getInstance();
 	
-	/* login.jsp 완성시  loginUserInfo.getId() 넣기
-		번호를얻어서 주소록을 조회한다.
-	*/
-	User userInfo = userDao.getUserById("osh");
-	Address address = addressDao.getRepresentativeAddressByUserNo(userInfo.getNo());
+	Address address = addressDao.getRepresentativeAddressByUserNo(loginUserInfo.getNo());
 
-	String[] tel = userInfo.getTel().split("-");
+	String[] tel = loginUserInfo.getTel().split("-");
 %>
 <div class="container">
 	<div class="row">
@@ -125,7 +121,7 @@
 							</colgroup>
 							<tr>
 								<th>아이디</th>
-								<td><input type="text" name="userId" value="<%=userInfo.getId() %>" readonly="readonly"><span class="px-1">(영문소문자/숫자, 4~16자)</span></td>
+								<td><input type="text" name="userId" value="<%=loginUserInfo.getId() %>" readonly="readonly"><span class="px-1">(영문소문자/숫자, 4~16자)</span></td>
 							</tr>
 							<tr>
 								<th>비밀번호 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
@@ -148,7 +144,7 @@
 							</tr>
 							<tr>
 								<th>이름</th>
-								<td><input type="text" name="name" value="<%=userInfo.getName() %>" readonly="readonly"></td>
+								<td><input type="text" name="name" value="<%=loginUserInfo.getName() %>" readonly="readonly"></td>
 							</tr>
 							<tr>
 								<th>주소</th>
@@ -173,8 +169,8 @@
 							</tr>
 							<tr>
 								<th>SMS 수신여부 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-								<td><input type="radio" value="Y" name="smsSubscription" <%="Y".equals(userInfo.getSmsSubscription())? "checked" : "" %>> 수신함
-									<input type="radio" value="N" name="smsSubscription" <%="N".equals(userInfo.getSmsSubscription())? "checked" : "" %>> 수신안함
+								<td><input type="radio" value="Y" name="smsSubscription" <%="Y".equals(loginUserInfo.getSmsSubscription())? "checked" : "" %>> 수신함
+									<input type="radio" value="N" name="smsSubscription" <%="N".equals(loginUserInfo.getSmsSubscription())? "checked" : "" %>> 수신안함
 									<div>
 										쇼핑몰에서 제공하는 유익한 이벤트 소식을 SMS로 받으실 수 있습니다.
 									</div>	
@@ -182,7 +178,7 @@
 							</tr>
 							<tr>
 								<th>이메일 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-								<td><input type="text" name="userEmail" value="<%=userInfo.getEmail() %>" id="email">
+								<td><input type="text" name="userEmail" value="<%=loginUserInfo.getEmail() %>" id="email">
 									<div class="form-text text-danger" style="display: none;" id="error-email">
 										이메일을 입력해 주세요.
 									</div>
@@ -190,8 +186,8 @@
 							</tr>
 							<tr>
 								<th>이메일 수신여부 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
-								<td><input type="radio" value="Y" name="emailSubscription" <%="Y".equals(userInfo.getEmailSubscription())? "checked" : "" %>> 수신함
-									<input type="radio" value="N" name="emailSubscription" <%="N".equals(userInfo.getEmailSubscription())? "checked" : "" %>> 수신안함
+								<td><input type="radio" value="Y" name="emailSubscription" <%="Y".equals(loginUserInfo.getEmailSubscription())? "checked" : "" %>> 수신함
+									<input type="radio" value="N" name="emailSubscription" <%="N".equals(loginUserInfo.getEmailSubscription())? "checked" : "" %>> 수신안함
 									<div>
 										쇼핑몰에서 제공하는 유익한 이벤트 소식을 email로 받으실 수 있습니다.
 									</div>

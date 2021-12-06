@@ -97,18 +97,15 @@
 <%@ include file="../../common/navbar.jsp" %>
 <%
 	/* 로그인 없이 이 페이지에 접근하는 경우 */
-	/* 	if (loginUserInfo == null) {
-			response.sendRedirect("loginform.jsp");		
-			return;
-		} */
+	if (loginUserInfo == null) {
+		response.sendRedirect("loginform.jsp");		
+		return;
+	} 
 
 	UserDao userDao = UserDao.getInstance();
 	OrderDao orderDao = OrderDao.getinstance();
-	/* login.jsp 완성시  loginUserInfo 넣기 */
-	User user = userDao.getUserByNo(10000);
 	
-	/* login.jsp 완성시  loginUserInfo 넣기 */
-	int[] totalAmount = orderDao.getTotalAmount(10000);
+	int[] totalAmount = orderDao.getTotalAmount(loginUserInfo.getNo());
 	DecimalFormat df = new DecimalFormat("##,###");
 %>
 <div class="container">    
@@ -133,7 +130,7 @@
 		<div class="col">
 			<ul class="point">
 				<li class="title"><span>총 적립금</span>
-					<strong class="data"><%=df.format(user.getPoint()) %>원</strong>
+					<strong class="data"><%=df.format(loginUserInfo.getPoint()) %>원</strong>
 				</li>
 				<li class="title"><span >총 주문</span>
 					<strong class="data"><%=df.format(totalAmount[0]) %>원 (<%=totalAmount[1] %>회)</strong>
@@ -152,16 +149,16 @@
 					<ul class="state text-center">
 						<li><strong>주문완료</strong>
 							<!--10000 -> loginUserInfo.getNo() -->
-							<a href="orderList.jsp?subMenu=order"><%=orderDao.getOrderItemAmount(10000, "주문완료") %></a>
+							<a href="orderList.jsp?subMenu=order"><%=orderDao.getOrderItemAmount(loginUserInfo.getNo(), "주문완료") %></a>
 						</li>
 						<li><strong>교환</strong>
-							<a href="orderList.jsp?subMenu=change"><%=orderDao.getOrderItemAmount(10000, "교환") %></a>
+							<a href="orderList.jsp?subMenu=exchange"><%=orderDao.getOrderItemAmount(loginUserInfo.getNo(), "교환") %></a>
 						</li>
 						<li><strong>취소</strong>
-							<a href="orderList.jsp?subMenu=can"><%=orderDao.getOrderItemAmount(10000, "취소") %></a>
+							<a href="orderList.jsp?subMenu=cancel"><%=orderDao.getOrderItemAmount(loginUserInfo.getNo(), "취소") %></a>
 						</li>
 						<li><strong>반품</strong>
-							<a href="orderList.jsp?subMenu=return"><%=orderDao.getOrderItemAmount(10000, "반품") %></a>
+							<a href="orderList.jsp?subMenu=return"><%=orderDao.getOrderItemAmount(loginUserInfo.getNo(), "반품") %></a>
 						</li>
 					</ul>
 				</div>

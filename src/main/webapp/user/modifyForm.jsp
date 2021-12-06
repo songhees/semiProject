@@ -81,15 +81,13 @@
 <body>
 <%@ include file="../common/navbar.jsp" %>
 <%
-/* 로그인 없이 이 페이지에 접근하는 경우 */
+	/* 로그인 없이 이 페이지에 접근하는 경우 */
 	if (loginUserInfo == null) {
 		response.sendRedirect("loginform.jsp");		
 		return;
 	}
 
-	UserDao userDao = UserDao.getInstance();
 	AddressDao addressDao = AddressDao.getInstance();
-	
 	Address address = addressDao.getRepresentativeAddressByUserNo(loginUserInfo.getNo());
 
 	String[] tel = loginUserInfo.getTel().split("-");
@@ -121,7 +119,9 @@
 							</colgroup>
 							<tr>
 								<th>아이디</th>
-								<td><input type="text" name="userId" value="<%=loginUserInfo.getId() %>" readonly="readonly"><span class="px-1">(영문소문자/숫자, 4~16자)</span></td>
+								<td><input type="text" name="userId" value="<%=loginUserInfo.getId() %>" readonly="readonly">
+									<span class="px-1">(영문소문자/숫자, 4~16자)</span>
+								</td>
 							</tr>
 							<tr>
 								<th>비밀번호 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
@@ -151,7 +151,7 @@
 								<td>
 									<input name="postcode" type="text" id="postcode" placeholder="우편번호" value="<%=address != null? address.getPostalCode() : "" %>">
 									<input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
-									<input name ="baseAddress" type="text" id="address" placeholder="주소" value="<%=address != null? address.getBaseAddress() : "" %>"><br>
+									<input name="baseAddress" type="text" id="address" placeholder="주소" value="<%=address != null? address.getBaseAddress() : "" %>"><br>
 									<input name="addressDetail" type="text" id="detailAddress" placeholder="상세주소" value="<%=address != null? address.getDetail() : "" %>">
 								</td>
 							</tr>
@@ -203,7 +203,7 @@
 									<a href="../index.jsp" class="btn btn-dark opacity-50">취소</a>
 								</div>
 								<div class="col-1">
-									<button class="btn btn-outline-secondary btn-sm" style="width: 80px;" type="submit">회원탈퇴</button>
+									<button class="btn btn-outline-secondary btn-sm" style="width: 80px;" type="button" onclick="deleteUser(<%=loginUserInfo.getNo() %>)">회원탈퇴</button>
 								</div>
 							</div>
 						</div>
@@ -246,14 +246,14 @@
 		
 		var inValid = true;
 		if (inputPwd === '') {
-			errorMessagePwdByInput.textContent = '비밀번호를 입력해주세요.'
+			errorMessagePwdByInput.textContent = '비밀번호를 입력해주세요.';
 			errorMessagePwdByInput.style.display = '';
 			inValid = false;
-		} else if (inputPwd <= 7) {
-			errorMessagePwdByInput.textContent = '최소 8글자 이상이어야 합니다.'
+		} else if (inputPwd.length <= 7) {
+			errorMessagePwdByInput.textContent = '최소 8글자 이상이어야 합니다.';
 			errorMessagePwdByInput.style.display = '';
 			inValid = false;			
-		} else if (!pattern1.test(password) || !pattern2.test(password) || !pattern3.test(password)) {
+		} else if (!pattern1.test(inputPwd) || !pattern2.test(inputPwd) || !pattern3.test(inputPwd)) {
 			errorMessagePwdByInput.textContent = '비밀번호는 영문 대소문자, 숫자, 특수문자로 구성해야 합니다.'
 			errorMessagePwdByInput.style.display = '';
 			inValid = false;			
@@ -280,6 +280,10 @@
 			loginForm.submit();
 		}
 	}
+	
+/* 	function deleteUser(no) {
+		location.href = "delete.jsp?no=" + no;
+	} */
 	
     function sample6_execDaumPostcode() {
         new daum.Postcode({

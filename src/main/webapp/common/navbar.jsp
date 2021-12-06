@@ -49,7 +49,7 @@
 				    	<a class="nav-link dropdown-toggle" href="/shopingMall/user/mypage.jsp" role="button">MY PAGE</a>
 				        <ul class="dropdown-menu">
 				        	<li><a class="dropdown-item" href="/shopingMall/user/orderList.jsp">주문조회</a></li>
-				            <li><a class="dropdown-item" href="/shopingMallt/user/modifyForm.jsp">회원정보수정</a></li>
+				            <li><a class="dropdown-item" href="/shopingMall/user/modifyForm.jsp">회원정보수정</a></li>
 				            <li><a class="dropdown-item" href="#">적립금</a></li>
 				            <li><a class="dropdown-item" href="#">나의게시물</a></li>
 				        </ul>
@@ -70,7 +70,7 @@
 				<input class="form-control form-control-sm" type="search" aria-label="Search" name="nameKeyword">
 			    <button class="btn btn-secondary btn-sm opacity-75" type="submit"><i class="bi bi-search"></i></button>
    			</form>
-   			<a href="/semi-project/user/cart/cartList.jsp">
+   			<a href="/shopingMall/user/cart/cartList.jsp">
 		  		<i class="bi bi-cart text-dark opacity-75 p-3" style="font-size: 30px;"></i>
    			</a>
 		</div>

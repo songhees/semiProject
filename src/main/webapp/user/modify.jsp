@@ -1,3 +1,4 @@
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="semi.vo.Address"%>
 <%@page import="semi.dao.AddressDao"%>
 <%@page import="semi.dao.UserDao"%>
@@ -25,10 +26,12 @@
 	String name = request.getParameter("name");
 	
 	String[] phoneNumber = request.getParameterValues("userTel");
+	
+	/* 같은 전화번호와 이메일을 갖는 사용자가 있는지 확인해야 하나? */
 	String tel = String.join("-", phoneNumber);
 	
-	String smsSubscription = request.getParameter("smsSubscription");
 	String email = request.getParameter("userEmail");
+	String smsSubscription = request.getParameter("smsSubscription");
 	String emailSubscription = request.getParameter("emailSubscription");
 	
 	AddressDao addressDao = AddressDao.getInstance();
@@ -39,22 +42,26 @@
 	String postCode = request.getParameter("postcode");
 	String baseAddress = request.getParameter("baseAddress");
 	String addressDetail = request.getParameter("addressDetail");
-	if (address != null) { 
-		// 기존에 있던 주소면 update하여 변경
-		address.setPostalCode(postCode);
-		address.setBaseAddress(baseAddress);
-		address.setDetail(addressDetail);
-		// 유저 정보의 번호에 해당하는 대표 주소의 번호를 통해 수정한다.
-		addressDao.updateAddress(address);
-	} else {
-		// 기존에 없던 주소면 insert하여 넣는다.
-		address.setUser(loginUserInfo);
-		address.setAddressName("미지정");
-		address.setPostalCode(postCode);
-		address.setAddressDefault("Y");
-		address.setBaseAddress(baseAddress);
-		address.setDetail(addressDetail);
-		addressDao.insertAddress(address);
+	
+	if (!postCode.isBlank() && !baseAddress.isBlank() && !addressDetail.isBlank()) {
+		if (address != null) { 
+			// 기존에 있던 주소면 update하여 변경
+			address.setPostalCode(postCode);
+			address.setBaseAddress(baseAddress);
+			address.setDetail(addressDetail);
+			// 유저 정보의 번호에 해당하는 대표 주소의 번호를 통해 수정한다.
+			addressDao.updateAddress(address);
+		} else {
+			// 기존에 없던 주소면 insert하여 넣는다.
+			address = new Address();
+			address.setUser(loginUserInfo);
+			address.setAddressName("미지정");
+			address.setPostalCode(postCode);
+			address.setAddressDefault("Y");
+			address.setBaseAddress(baseAddress);
+			address.setDetail(addressDetail);
+			addressDao.insertAddress(address);
+		}
 	}
 	
 	loginUserInfo.setPassword(password);
@@ -67,5 +74,5 @@
 	UserDao userDao = UserDao.getInstance();
  	userDao.updateUser(loginUserInfo);
 	
-	response.sendRedirect("../index.jsp");
+	response.sendRedirect("modifyForm.jsp");
 %>

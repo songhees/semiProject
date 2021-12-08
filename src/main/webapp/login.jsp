@@ -6,16 +6,6 @@
 <%
 	String id = request.getParameter("id");
 	String password = request.getParameter("password");
-
-	if (id != null && id.isBlank()) {
-		response.sendRedirect("loginform.jsp?error=empty");
-		return;
-	}
-	
-	if (password != null && password.isBlank()) {
-		response.sendRedirect("loginform.jsp?error=empty");
-		return;
-	}
 	
 	UserDao userDao = UserDao.getInstance();
 	User user = userDao.getUserById(id);

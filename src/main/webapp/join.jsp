@@ -1,3 +1,5 @@
+<%@page import="semi.dao.PointDao"%>
+<%@page import="semi.vo.Point"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="org.apache.commons.codec.StringDecoder"%>
 <%@page import="semi.vo.User"%>
@@ -45,7 +47,10 @@
 	if (emailSubscription != "N") {
 		emailSubscription = "Y";
 	} 
+	int userNo = userDao.getUserNo();
+	
 	loginUserInfo = new User();
+	loginUserInfo.setNo(userNo);
 	loginUserInfo.setId(userId);
 	loginUserInfo.setPassword(password);
 	loginUserInfo.setName(name);

@@ -206,12 +206,12 @@
 					<div class="text-center">
 						<i class="bi bi-piggy-bank"></i>
 						<div class="card-title py-2">
-							<a class="card-title" href="#"><strong>MILEAGE</strong>
+							<a class="card-title" href="point/pointHistory.jsp"><strong>MILEAGE</strong>
 							<span style="display: block;">적립금</span>
 							</a>
 						</div>
 						<p class="card-text text-muted">
-							<a href="#">적립금은 상품 구매 시 사용하실 수 있습니다.</a>
+							<a href="point/pointHistory.jsp">적립금은 상품 구매 시 사용하실 수 있습니다.</a>
 						</p>
 					</div>
 				</div>

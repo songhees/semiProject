@@ -215,6 +215,23 @@ public class UserDao {
 		connection.close();
 	}
 	
+	public int getUserNo () throws SQLException {
+		String sql = "select user_seq.nextval no "
+				+ "from dual ";
+		int userNo = 0;
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		ResultSet rs = pstmt.executeQuery();
+		rs.next();
+		userNo = rs.getInt("no");
+
+		rs.close();
+		pstmt.close();
+		connection.close();
+		
+		return userNo;
+	}
+	
 	/**
 	 * 지정된 사용자정보를 테이블에 저장한다.
 	 * @param user
@@ -222,19 +239,20 @@ public class UserDao {
 	 */
 	public void insertUser(User user) throws SQLException {
 		String sql = "insert into semi_user"
-				+ "(user_id, user_password, user_name, user_tel, user_email, "
-				+ "user_created_date, user_email_subscription, user_sms_subscription, grade_code, user_point) "
-				+ "values"
-				+ "(?, ?, ?, ?, ?, sysdate, ?, ?, '브론즈', 0) ";
+				+ "(user_no, user_id, user_password, user_name, user_tel, user_email, "
+				+ "user_created_date, user_email_subscription, user_sms_subscription, grade_code) "
+				+ "values "
+				+ "(?, ?, ?, ?, ?, ?, sysdate, ?, ?, '브론즈') ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setString(1, user.getId());
-		pstmt.setString(2, user.getPassword());
-		pstmt.setString(3, user.getName());
-		pstmt.setString(4, user.getTel());
-		pstmt.setString(5, user.getEmail());
-		pstmt.setString(6, user.getEmailSubscription());
-		pstmt.setString(7, user.getSmsSubscription());
+		pstmt.setInt(1, user.getNo());
+		pstmt.setString(2, user.getId());
+		pstmt.setString(3, user.getPassword());
+		pstmt.setString(4, user.getName());
+		pstmt.setString(5, user.getTel());
+		pstmt.setString(6, user.getEmail());
+		pstmt.setString(7, user.getEmailSubscription());
+		pstmt.setString(8, user.getSmsSubscription());
 		
 		pstmt.executeUpdate();
 		

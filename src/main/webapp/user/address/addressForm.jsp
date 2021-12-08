@@ -10,9 +10,9 @@
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" >
-    <title></title>
+    <title>빈스데이</title>
 <style type="text/css">
-	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover {
+	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover, li.breadcrumb-item a:hover {
 		text-decoration: none;
 		color: #757575;
 		font-size: 14px;
@@ -90,22 +90,25 @@
 <body>
 <%@ include file="../../common/navbar.jsp" %>
 <%
+
 	int addressNo = NumberUtils.toInt(request.getParameter("no"), 0);
-/* 로그인 없이 이 페이지에 접근하는 경우 */
-/* 	if (loginUserInfo == null) {
-		response.sendRedirect("loginform.jsp");		
+	/* 로그인 없이 이 페이지에 접근하는 경우 */
+	if (loginUserInfo == null) {
+		response.sendRedirect("../../loginform.jsp");		
 		return;
 	}
-*/
 	AddressDao addressDao = AddressDao.getInstance();
-	Address address = addressDao.getAddressByNo(addressNo);
-
-	/*
+	
+	Address address = null;
+	if (addressNo != 0) {
+		address = addressDao.getAddressByNo(addressNo);
+		
 		if (loginUserInfo.getNo() != address.getUser().getNo()) {
-			response.sendRedirect("index.jsp");		
+			response.sendRedirect("../../index.jsp");		
 			return;
 		}
-	 */
+	}
+
 %>
 <div class="container">    
 	<div class="row mb-3">
@@ -113,9 +116,9 @@
 			<!-- 브레드크럼 breadcrumb -->
 			<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 			  <ol class="breadcrumb justify-content-end">
-			    <li class="breadcrumb-item"><a href="#">HOME</a></li>
-			    <li class="breadcrumb-item"><a href="#">MY PAGE</a></li>
-			    <li class="breadcrumb-item active" aria-current="page">ADDRESS BOOK</li>
+			    <li class="breadcrumb-item"><a href="../../index.jsp">HOME</a></li>
+			    <li class="breadcrumb-item"><a href="../mypage.jsp">MY PAGE</a></li>
+			    <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;">ADDRESS BOOK</li>
 			  </ol>
 			</nav>
 		</div>
@@ -149,7 +152,7 @@
 						<tr>
 							<th>성명 <img src="https://img.echosting.cafe24.com/skin/base/common/ico_required_blue.gif" alt="필수"></th>
 							<td>
-								<input type="text" name="name" id="userName" value="<%="오송희"  /*=loginUserInfo.getName */	%>" disabled readonly>
+								<input type="text" name="name" id="userName" value="<%=loginUserInfo.getName() %>" disabled readonly>
 							</td>
 						</tr>
 						<tr>

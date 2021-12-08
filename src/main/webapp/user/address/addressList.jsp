@@ -9,9 +9,9 @@
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" >
-    <title></title>
+    <title>빈스데이</title>
 <style type="text/css">
-		li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover {
+	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover, li.breadcrumb-item a:hover {
 		text-decoration: none;
 		color: #757575;
 		font-size: 14px;
@@ -64,17 +64,16 @@
 <body>
 <%@ include file="../../common/navbar.jsp" %>
 <%
-/* 로그인 없이 이 페이지에 접근하는 경우 */
-/* 	if (loginUserInfo == null) {
-	response.sendRedirect("loginform.jsp");		
-	return;
-} */
+	/* 로그인 없이 이 페이지에 접근하는 경우 */
+ 	if (loginUserInfo == null) {
+		response.sendRedirect("../../loginform.jsp");		
+		return;
+	}
 	String error = request.getParameter("error");
 
 	AddressDao addressDao = AddressDao.getInstance();
-/* 검색 조건 */
-/* login.jsp 완성시  loginUserInfo.getNo() 넣기*/
-	List<Address> addressList = addressDao.getAllAddressByUserNo(10000);
+	
+	List<Address> addressList = addressDao.getAllAddressByUserNo(loginUserInfo.getNo());
 	StringBuffer str = new StringBuffer();
 %>
 <div class="container">    
@@ -94,9 +93,9 @@
 			<div>
 				<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 				  <ol class="breadcrumb justify-content-end">
-				    <li class="breadcrumb-item"><a href="#">HOME</a></li>
-				    <li class="breadcrumb-item"><a href="#">MY PAGE</a></li>
-				    <li class="breadcrumb-item active" aria-current="page">ADDRESS BOOK</li>
+				    <li class="breadcrumb-item"><a href="../../index.jsp">HOME</a></li>
+				    <li class="breadcrumb-item"><a href="../mypage.jsp">MY PAGE</a></li>
+				    <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;">ADDRESS BOOK</li>
 				  </ol>
 				</nav>
 			</div>
@@ -147,7 +146,7 @@
 		}
 %>
 							<td><%=address.getAddressName() %></td>
-							<td><%="오송희" /*=loginUserInfo.getName  */ %></td>
+							<td><%=loginUserInfo.getName() %></td>
 							<td class="text-start"><%=str.append("(").append(address.getPostalCode()).append(")").append(address.getBaseAddress()).append(" ").append(address.getDetail()) %></td>
 							<td><a class="small btn btn-sm" href="addressForm.jsp?no=<%=address.getAddressNo() %>">수정</a></td>
 						</tr>

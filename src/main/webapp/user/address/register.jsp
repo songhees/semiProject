@@ -9,18 +9,15 @@
 
 	User loginUserInfo = (User)session.getAttribute("LOGIN_USER_INFO");
 
-// 로그인되어 있지 않는 유저일 경우
-/* 	if (loginUserInfo == null) {
-	response.sendRedirect("../loginform.jsp");		
-	return;
-} */
+	// 로그인되어 있지 않는 유저일 경우
+	if (loginUserInfo == null) {
+		response.sendRedirect("../loginform.jsp");		
+		return;
+	}
 	AddressDao addressDao = AddressDao.getInstance();
 	Address address = new Address();
 	
-	User user = new User(); //지울것
-	user.setNo(10000);	// 지울것
-	/* 로그인 페이지 만든 후 user ->  loginUserInfo 로 수정*/
-	address.setUser(user);
+	address.setUser(loginUserInfo);
 	address.setAddressNo(addressNo);
 	address.setAddressName(request.getParameter("addressName"));
 	address.setPostalCode(request.getParameter("postcode"));
@@ -28,13 +25,11 @@
 	address.setDetail(request.getParameter("addressDetail"));
 	
 	String isDefault = request.getParameter("isDefault");
-	System.out.println("default값" + isDefault);
 	if (isDefault == null) {
 		address.setAddressDefault("N");
 	} else {
 		address.setAddressDefault("Y");
-		/*10000 -> loginUserInfo.getNo() */
-		addressDao.updateDefaultToN(10000);		
+		addressDao.updateDefaultToN(loginUserInfo.getNo());		
 	}
 
 	if (addressNo == 0) {

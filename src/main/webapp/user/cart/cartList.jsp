@@ -13,7 +13,7 @@
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" >
     <title>빈스데이</title>
 <style type="text/css">
-	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover {
+	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover, li.breadcrumb-item a:hover {
 		text-decoration: none;
 		color: #757575;
 		font-size: 14px;
@@ -70,7 +70,7 @@
 		font-size: 12px;
 		
 	}
-	.d-grid div button#total, .d-grid div a {
+	.d-grid div button#total, .d-grid div a, div#emptyBtn a {
 		padding-top: 15px;
 		border-radius: 0;
 		width: 120px;
@@ -151,7 +151,7 @@
 		<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 		  <ol class="breadcrumb justify-content-end">
 		    <li class="breadcrumb-item"><a href="../../index.jsp">HOME</a></li>
-		    <li class="breadcrumb-item active" aria-current="page">CART</li>
+		    <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;">CART</li>
 		  </ol>
 		</nav>
 	</div>
@@ -159,15 +159,6 @@
 	<div class="text-center my-5">
 		<h5><strong>CART</strong></h5>
 	</div>
-<%
-	if (itemList.isEmpty()) {
-%>
-	<div>
-		장바구니가 비어있습니다.
-	</div>
-<%
-	} else {
-%>
 	<div class="row mb-5">
 		<div class="col">
 			<div class="point p-3">
@@ -176,8 +167,20 @@
 			</div>
 		</div>
 	</div>
+<%
+	if (itemList.isEmpty()) {
+%>
+	<div class="text-center m-5">
+		<p style="font-size: 14px; color: #707070;">장바구니가 비어있습니다.</p>
+	</div>
+	<div class="text-end" id="emptyBtn">
+		<a class="btn btn-outline-secondary btn-sm" href="../../index.jsp">쇼핑계속하기</a>
+	</div>
+<%
+	} else {
+%>
 	<div>
-		<form id="cartInfo" action="order.jsp" method="get">
+		<form id="cartInfo" action="/semi-project/product/orderForm.jsp?" method="get">
 			<input type="hidden" name="from" value="cart">
 			<table class="vinc">
 				<colgroup>
@@ -282,7 +285,7 @@
 				<div class="col">
 					<div class="row d-grid d-md-flex">
 						<div class="offset-1 col-9 text-center">	
-							<button id="total" class="btn btn-dark opacity-50" type="button" onclick="totalOrder()">전체상품주문</button>
+							<button id="total" class="btn btn-dark opacity-50" type="button" onclick="totalOrder()" style="padding-top: 5px;">전체상품주문</button>
 							<button id="choice" class="btn btn-dark opacity-75" type="button" onclick="choiceOrder()">선택상품주문</button>
 						</div>
 						<div class="col-2">
@@ -356,7 +359,7 @@
 	
 	function orderItem(no) {
 		var amount = document.getElementById("amount-" + no).value
-		location.href = "order.jsp?no=" + no + "&amount=" + amount + "&from=cart" ;
+		location.href = "/semi-project/product/orderForm.jsp?no=" + no + "&amount=" + amount + "&from=cart" ;
 	}
 	
 	function totalOrder() {

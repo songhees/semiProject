@@ -1,3 +1,4 @@
+<%@page import="semi.vo.Address"%>
 <%@page import="semi.vo.User"%>
 <%@page import="org.apache.commons.lang3.math.NumberUtils"%>
 <%@page import="semi.dao.AddressDao"%>
@@ -9,14 +10,20 @@
 	
 	User loginUserInfo = (User)session.getAttribute("LOGIN_USER_INFO");
 	
-
 	// 로그인되어 있지 않는 유저일 경우
-/* 	if (loginUserInfo == null) {
-		response.sendRedirect("../loginform.jsp");		
+ 	if (loginUserInfo == null) {
+		response.sendRedirect("../../loginform.jsp");		
 		return;
-	} */
+	}
 	
 	AddressDao addressDao = AddressDao.getInstance();
+	Address address = addressDao.getAddressByNo(addressNo);
+	
+	// 사용자가 아닌 다른 사람이 기본값을 바꿀려고 하는 경우
+	if (address.getUser().getNo() != loginUserInfo.getNo()) {
+		response.sendRedirect("addressList.jsp");		
+		return;
+	}
 	
 	/* 사용자가 고정 버튼을 누를 경우 
 		모든 배송지의 기본값 여부는 N이되고 버튼을 누른 addressNo의 배송지만 Y로 변경한다.
@@ -24,7 +31,7 @@
 	if ("fix".equals(menu)) {
 		/* 로그인폼 완성 후 loginUserInfo.getNo넣기 */
 		// 사용자의 모든 배송지의 기본값을 N으로 바꾼다.
-		addressDao.updateDefaultToN(10000);		
+		addressDao.updateDefaultToN(loginUserInfo.getNo());		
 		// 배송지번호에 해당하는 배송지의 기본값을 Y로 바꾼다.
 		addressDao.updateDefault(addressNo, "Y");
 	}

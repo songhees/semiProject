@@ -23,7 +23,7 @@
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" >
-    <title></title>
+    <title>빈스데이</title>
 <style type="text/css">
 
 	li.breadcrumb-item, .breadcrumb-item a, .breadcrumb-item a:hover , a.nav-link, a.nav-link:hover, a.hover {
@@ -135,7 +135,7 @@
 		  <ol class="breadcrumb justify-content-end">
 		    <li class="breadcrumb-item"><a href="../index.jsp">HOME</a></li>
 		    <li class="breadcrumb-item"><a href="mypage.jsp">MY PAGE</a></li>
-		    <li class="breadcrumb-item active" aria-current="page">ORDER</li>
+		    <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;">ORDER</li>
 		  </ol>
 		</nav>
 	</div>

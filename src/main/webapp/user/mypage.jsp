@@ -9,9 +9,9 @@
    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" >
-    <title></title>
+    <title>빈스데이</title>
 <style type="text/css">
-	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, a.hover{
+	li.breadcrumb-item, .breadcrumb-item a, a.nav-link, li.breadcrumb-item a:hover{
 		text-decoration: none;
 		color: #757575;
 		font-size: 14px;
@@ -116,7 +116,7 @@
 				<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 				  <ol class="breadcrumb justify-content-end">
 				    <li class="breadcrumb-item"><a href="../index.jsp">HOME</a></li>
-				    <li class="breadcrumb-item active" aria-current="page">MY PAGE</li>
+				    <li class="breadcrumb-item active" aria-current="page" style="font-weight: bold;">MY PAGE</li>
 				  </ol>
 				</nav>
 			</div>
@@ -194,7 +194,7 @@
 							</a>
 						</div>
 						<p class="card-text text-muted">
-							<a href="orderList.jsp">회원이신 고객님의 개인정보를 관리하는 공간입니다.</a>
+							<a href="modifyForm.jsp">회원이신 고객님의 개인정보를 관리하는 공간입니다.</a>
 						</p>
 					</div>
 				</div>
@@ -211,7 +211,7 @@
 							</a>
 						</div>
 						<p class="card-text text-muted">
-							<a href="orderList.jsp">적립금은 상품 구매 시 사용하실 수 있습니다.</a>
+							<a href="#">적립금은 상품 구매 시 사용하실 수 있습니다.</a>
 						</p>
 					</div>
 				</div>
@@ -228,7 +228,7 @@
 							</a>
 						</div>
 						<p class="card-text text-muted">
-							<a href="orderList.jsp">자주 사용하는 배송지를 등록하고 관리하실 수 있습니다.</a>
+							<a href="address/addressList.jsp">자주 사용하는 배송지를 등록하고 관리하실 수 있습니다.</a>
 						</p>
 					</div>
 				</div>
@@ -245,7 +245,7 @@
 							</a>
 						</div>
 						<p class="card-text text-muted">
-							<a href="orderList.jsp">고객님께서 작성하신 게시물을 관리하는 공간입니다.</a>
+							<a href="#">고객님께서 작성하신 게시물을 관리하는 공간입니다.</a>
 						</p>
 					</div>
 				</div>

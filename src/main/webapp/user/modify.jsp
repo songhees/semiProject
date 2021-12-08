@@ -21,16 +21,28 @@
 		response.sendRedirect("../index.jsp");		
 	}
 	
+	UserDao userDao = UserDao.getInstance();
 	// 폼으로 부터 받아온 data
 	String password = DigestUtils.sha256Hex(request.getParameter("userPassword"));
 	String name = request.getParameter("name");
 	
 	String[] phoneNumber = request.getParameterValues("userTel");
 	
-	/* 같은 전화번호와 이메일을 갖는 사용자가 있는지 확인해야 하나? */
+	/* 같은 전화번호와 이메일을 갖는 사용자가 있는지 확인 */
 	String tel = String.join("-", phoneNumber);
-	
 	String email = request.getParameter("userEmail");
+	
+	User sameUser = userDao.getUserByEmail(email);
+	if (sameUser != null && sameUser.getNo() != loginUserInfo.getNo()) {
+		response.sendRedirect("modifyForm.jsp?error=email-exists");	
+		return;
+	}
+	sameUser = userDao.getUserByTel(tel);
+	if (sameUser != null && sameUser.getNo() != loginUserInfo.getNo()) {
+		response.sendRedirect("modifyForm.jsp?error=tel-exists");	
+		return;
+	}
+			
 	String smsSubscription = request.getParameter("smsSubscription");
 	String emailSubscription = request.getParameter("emailSubscription");
 	
@@ -71,7 +83,6 @@
 	loginUserInfo.setEmail(email);
 	loginUserInfo.setEmailSubscription(emailSubscription);
 	
-	UserDao userDao = UserDao.getInstance();
  	userDao.updateUser(loginUserInfo);
 	
 	response.sendRedirect("modifyForm.jsp");

@@ -113,7 +113,7 @@
 	criteria.setEndDate(criteria.getPeriod(period)[1]);
 	
 	int previousYear = Calendar.getInstance().get(Calendar.YEAR)-1;
-	int year = NumberUtils.toInt(request.getParameter("year"), previousYear);;
+	int year = NumberUtils.toInt(request.getParameter("year"), previousYear);
 	/* "subMenu" 가 뭔지에 따라  orderDao.getOrderItemListByUserNo의 매개 변수를 다르게 한다.*/
 	if ("history".equals(subMenu)) {
 		criteria.setBeginDate(year + "/01/01");
@@ -121,7 +121,7 @@
 	}
 	
 	int totalRecords = orderDao.getTotalRecords(criteria);
-	Pagination pagination = new Pagination(pageNo, totalRecords, 1, 5);
+	Pagination pagination = new Pagination(pageNo, totalRecords, 5, 5);
 	
 	criteria.setBegin(pagination.getBegin());
 	criteria.setEnd(pagination.getEnd());

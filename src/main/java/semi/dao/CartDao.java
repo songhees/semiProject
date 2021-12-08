@@ -90,6 +90,12 @@ public class CartDao {
 		connection.close();
 	}
 	
+	/**
+	 * 장바구니에 들어있는 상품정보 삭제
+	 * @param userNo 유저 번호
+	 * @param itemNo 상품 번호
+	 * @throws SQLException
+	 */
 	public void deleteCartItem(int userNo, int itemNo) throws SQLException {
 		String sql = "delete from semi_cart_item "
 				+ "where user_no = ? "
@@ -98,6 +104,28 @@ public class CartDao {
 		PreparedStatement pstmt = connection.prepareStatement(sql);
 		pstmt.setInt(1, userNo);
 		pstmt.setInt(2, itemNo);
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	/**
+	 * 장바구니에 상품정보 등록
+	 * @param itemDto 유저가 선택한 상품정보
+	 * @throws SQLException
+	 */
+	public void insertCartItem(CartItemDto itemDto) throws SQLException {
+		String sql = "insert into semi_cart_item "
+				+ "(user_no, product_item_no, cart_product_quantity) "
+				+ "values "
+				+ "(?, ?, ?) ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, itemDto.getUserNo());
+		pstmt.setInt(2, itemDto.getProductItemNo());
+		pstmt.setInt(3, itemDto.getQuantity());
+		
 		pstmt.executeUpdate();
 		
 		pstmt.close();

@@ -102,8 +102,8 @@ public class OrderDao {
 	
 	
 	/**
-	 * 주문상태 날짜 유저아이디에 대한 주문 검색건수 조회
-	 * @param criteria 주문상태 날짜 유저아이디
+	 * 주문상태 날짜 유저번호에 대한 주문 검색건수 조회
+	 * @param criteria 주문상태 날짜 유저번호
 	 * @return 주문 검색건수
 	 * @throws SQLException
 	 */
@@ -181,8 +181,8 @@ public class OrderDao {
 	}
 	
 	/**
-	 * 유저 아이디와 주문 번호에 해당하는 주문정보 조회
-	 * @param userId 유저 아이디
+	 * 유저 번호와 주문 번호에 해당하는 주문정보 조회
+	 * @param userNo 유저 번호
 	 * @param orderNo 주문 번호
 	 * @return 주문정보
 	 * @throws SQLException

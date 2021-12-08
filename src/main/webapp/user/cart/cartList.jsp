@@ -124,7 +124,7 @@
 <%
 /* 로그인 없이 이 페이지에 접근하는 경우 */
 	if (loginUserInfo == null) {
-	response.sendRedirect("loginform.jsp");		
+	response.sendRedirect("../../loginform.jsp");		
 	return;
 	} 
 	CartDao cartDao = CartDao.getInstance();

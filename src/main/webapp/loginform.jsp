@@ -17,6 +17,13 @@
 	#formInput {
 		width: 650px
 	}
+	
+	div.alert-danger {
+		line-height: 9px;
+		border-radius: 0;
+		font-size: 11px;
+	}
+	
 </style>
 </head>
 <body>
@@ -38,25 +45,22 @@
 	if ("empty".equals(error)) {				
 %>
 				<div class="alert alert-danger">
-					<strong>로그인 실패!!</strong> 아이디와 비밀번호는 필수입력값입니다.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					<span class="px-4">아이디와 비밀번호는 필수입력값입니다.</span>
 				</div>
 <%
 	} else if ("notfound-user".equals(error)) {				
 %>
 				<div class="alert alert-danger">
-					<strong>로그인 실패!!</strong> 회원정보가 존재하지 않습니다.
-				</div>
-<%	
-	} else if ("mismatch-password".equals(error)) {			
-%>
-				<div class="alert alert-danger">
-					<strong>로그인 실패!!</strong> 비밀번호가 일치하지 않습니다.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					<span class="px-4">회원정보가 존재하지 않습니다.</span>
 				</div>
 <%		
 	} else if("login-required".equals(error)) {				// 로그인 후 사용가능한 JSP 페이지를 로그인없이 요청했다.
 		%>
 				<div class="alert alert-danger">
-					<strong>로그인 필수!!</strong> 로그인이 필요한 페이지를 요청하였습니다.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					<span>로그인이 필요한 페이지를 요청하였습니다.</span>
 				</div>
 <%
 	} else if (loginUserInfo != null) {

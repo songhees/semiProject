@@ -240,9 +240,9 @@ public class UserDao {
 	public void insertUser(User user) throws SQLException {
 		String sql = "insert into semi_user"
 				+ "(user_no, user_id, user_password, user_name, user_tel, user_email, "
-				+ "user_created_date, user_email_subscription, user_sms_subscription, grade_code) "
+				+ "user_created_date, user_email_subscription, user_sms_subscription, grade_code, user_point) "
 				+ "values "
-				+ "(?, ?, ?, ?, ?, ?, sysdate, ?, ?, '브론즈') ";
+				+ "(?, ?, ?, ?, ?, ?, sysdate, ?, ?, '브론즈', ?) ";
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
 		pstmt.setInt(1, user.getNo());
@@ -253,10 +253,31 @@ public class UserDao {
 		pstmt.setString(6, user.getEmail());
 		pstmt.setString(7, user.getEmailSubscription());
 		pstmt.setString(8, user.getSmsSubscription());
+		pstmt.setInt(9, user.getPoint());
 		
 		pstmt.executeUpdate();
 		
 		pstmt.close();
 		connection.close();
+	}
+	
+	public String getGrade(int totalAmount) throws SQLException {
+		String sql = "select grade_code "
+				+ "from semi_user_grade "
+				+ "where ? >= min_accumulated_amount and ? <= max_accumulated_amount ";
+		String grade = null;
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, totalAmount);
+		pstmt.setInt(2, totalAmount);
+		
+		ResultSet rs = pstmt.executeQuery();
+		rs.next();
+		grade = rs.getString("grade_code");
+
+		rs.close();
+		pstmt.close();
+		connection.close();
+		return grade;
 	}
 }

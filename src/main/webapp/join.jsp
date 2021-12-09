@@ -10,7 +10,6 @@
 <%
 	User loginUserInfo = (User)session.getAttribute("LOGIN_USER_INFO");
 	
-	// 로그인되어 있지 않는 유저일 경우
 	if (loginUserInfo != null) {
 		response.sendRedirect("index.jsp");		
 		return;
@@ -47,11 +46,14 @@
 	if (emailSubscription != "N") {
 		emailSubscription = "Y";
 	} 
+
 	int userNo = userDao.getUserNo();
+	/* 신규 회원 포인트 적립 */
 	
 	loginUserInfo = new User();
 	loginUserInfo.setNo(userNo);
 	loginUserInfo.setId(userId);
+	loginUserInfo.setPoint(2000);
 	loginUserInfo.setPassword(password);
 	loginUserInfo.setName(name);
 	loginUserInfo.setTel(tel);
@@ -61,5 +63,12 @@
 	
  	userDao.insertUser(loginUserInfo);
 	
+	PointDao pointDao = PointDao.getInstance();
+	Point point = new Point();
+	point.setUserNo(userNo);
+	point.setPoint(2000);
+	point.setStatus("신규회원");
+	pointDao.insertPoint(point);
+
 	response.sendRedirect("index.jsp");
 %>

@@ -240,12 +240,12 @@
 					<div class="text-center">
 						<i class="bi bi-pencil-square"></i>
 						<div class="card-title py-2">
-							<a class="card-title" href="#"><strong>BOARD</strong>
+							<a class="card-title" href="reviewList.jsp"><strong>BOARD</strong>
 							<span style="display: block;">게시물 관리</span>
 							</a>
 						</div>
 						<p class="card-text text-muted">
-							<a href="#">고객님께서 작성하신 게시물을 관리하는 공간입니다.</a>
+							<a href="reviewList.jsp">고객님께서 작성하신 게시물을 관리하는 공간입니다.</a>
 						</p>
 					</div>
 				</div>

@@ -27,9 +27,9 @@ public class PointDao {
 	 */
 	public List<Point> getPointHistory(int userNo, int begin, int end) throws SQLException {
 		List<Point> pointHistory = new ArrayList<Point>();
-		String sql = "select order_no, point, point_status, point_update_date "
-				+ "from (select row_number() over (order by point_update_date desc) rn, "
-				+ "			order_no, point, point_status, point_update_date "
+		String sql = "select order_no, point, point_status, point_created_date "
+				+ "from (select row_number() over (order by point_created_date desc) rn, "
+				+ "			order_no, point, point_status, point_created_date "
 				+ "			from semi_point_history "
 				+ "			where user_no = ?) "
 				+ "where rn >= ? and rn <= ? ";
@@ -43,7 +43,7 @@ public class PointDao {
 		
 		while(rs.next()) {
 			Point point = new Point();
-			point.setOrderDate(rs.getDate("point_update_date"));
+			point.setCreatedDate(rs.getDate("point_created_date"));
 			point.setOrderNo(rs.getInt("order_no"));
 			point.setPoint(rs.getInt("point"));
 			point.setStatus(rs.getString("point_status"));
@@ -77,13 +77,13 @@ public class PointDao {
 	
 	
 	/**
-	 * 포인트 변화 상태를 등록
+	 * 주문 포인트 변화 상태를 등록
 	 * @param point
 	 * @throws SQLException
 	 */
-	public void insertPoint(Point point) throws SQLException {
+	public void insertOrderPoint(Point point) throws SQLException {
 		String sql = "insert into semi_point_history "
-				+ "(order_no, user_no, point, point_status, point_update_date) "
+				+ "(order_no, user_no, point, point_status, point_created_date) "
 				+ "values "
 				+ "(?, ?, ?, ?, sysdate) ";
 		Connection connection = getConnection();
@@ -92,6 +92,27 @@ public class PointDao {
 		pstmt.setInt(2, point.getUserNo());
 		pstmt.setInt(3, point.getPoint());
 		pstmt.setString(4, point.getStatus());
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	/**
+	 * 기타 포인트 변화 상태를 등록
+	 * @param point
+	 * @throws SQLException
+	 */
+	public void insertPoint(Point point) throws SQLException {
+		String sql = "insert into semi_point_history "
+				+ "(user_no, point, point_status, point_created_date) "
+				+ "values "
+				+ "(?, ?, ?, sysdate) ";
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, point.getUserNo());
+		pstmt.setInt(2, point.getPoint());
+		pstmt.setString(3, point.getStatus());
 		pstmt.executeUpdate();
 		
 		pstmt.close();

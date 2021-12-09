@@ -19,8 +19,21 @@ public class OrderItemDto {
 	private int productNo;
 	private String productName;
 	private String thumbnailUrl;
+	private long productPrice;
 	
 	public OrderItemDto() {}
+
+	public long getProductPrice() {
+		return productPrice;
+	}
+
+
+
+	public void setProductPrice(long productPrice) {
+		this.productPrice = productPrice;
+	}
+
+
 
 	public int getOrderNo() {
 		return orderNo;
@@ -117,5 +130,4 @@ public class OrderItemDto {
 	public void setThumbnailUrl(String thumbnailUrl) {
 		this.thumbnailUrl = thumbnailUrl;
 	}
-	
 }

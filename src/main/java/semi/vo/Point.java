@@ -3,9 +3,9 @@ package semi.vo;
 import java.util.Date;
 
 public class Point {
-	private Date orderDate;
+	private Date createdDate;
 	private int point;
-	private int orderNo;
+	private Integer orderNo;
 	private String status;
 	private int userNo;
 	
@@ -13,11 +13,11 @@ public class Point {
 		
 	}
 	
-	public Date getOrderDate() {
-		return orderDate;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
-	public void setOrderDate(Date orderDate) {
-		this.orderDate = orderDate;
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 	public int getPoint() {
 		return point;
@@ -25,12 +25,15 @@ public class Point {
 	public void setPoint(int point) {
 		this.point = point;
 	}
-	public int getOrderNo() {
+	
+	public Integer getOrderNo() {
 		return orderNo;
 	}
-	public void setOrderNo(int orderNo) {
+
+	public void setOrderNo(Integer orderNo) {
 		this.orderNo = orderNo;
 	}
+
 	public String getStatus() {
 		return status;
 	}

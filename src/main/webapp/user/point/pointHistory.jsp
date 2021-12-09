@@ -113,7 +113,7 @@
 		return;
 	}
 
-	String pageNo = request.getParameter("no");
+	String pageNo = request.getParameter("pageNo");
 	PointDao pointDao = PointDao.getInstance();
 	
 	int totalRecord = pointDao.getTotalRecords(loginUserInfo.getNo());
@@ -186,23 +186,35 @@
 		for (Point point : pointList) {
 %>
 						<tr>
-							<td><%=point.getOrderDate() %></td>
+							<td><%=point.getCreatedDate() %></td>
+<%
+			if (point.getOrderNo() == 0) {
+%>
+							<td> </td>
+<%
+			} else {
+				
+%>
 							<td><a class="orderDetail" href="../orderDetail.jsp?orderNo=<%=point.getOrderNo() %>"><%=point.getOrderNo() %></a></td>
 <%
-			if ("적립".equals(point.getStatus())) {
-%>				
-							<td><%=df.format(point.getPoint()) %>원</td>
-							<td style="text-align: left;">구매에 대한 적립금</td>
-<%
-			} else if ("사용".equals(point.getStatus())) {
+			}
+			 if ("use".equals(point.getStatus())) {
 %>
 							<td>-<%=df.format(point.getPoint()) %>원</td>
 							<td style="text-align: left;">상품구매시 사용한 적립금</td>
 <%
-			}
+			} else if ("add".equals(point.getStatus())){
 %>
+							<td><%=df.format(point.getPoint()) %>원</td>
+							<td style="text-align: left;">구매에 대한 적립금</td>
+<%
+			} else {
+%>
+							<td><%=df.format(point.getPoint()) %>원</td>
+							<td style="text-align: left;"><%=point.getStatus() %>에 대한 적립금</td>
 						</tr>
 <%
+			}
 		}
 %>	
 					</tbody>
@@ -211,22 +223,12 @@
 		</div>
 	</div>
 	<!-- 이용안내 메세지 -->
-	<div id="guidance" class="my-5 border">
-		<h3 class="border-bottom p-2" style="background-color: #fbfafa;">적립금 안내</h3>
-		<div class="p-1">
-			<ol>
-				<li>주문으로 발생한 적립금은 배송완료 후 20일 부터 실제 사용 가능한 적립금으로 전환됩니다. 배송완료 시점으로부터 20일 동안은 미가용 적립금으로 분류됩니다.</li>
-				<li>미가용 적립금은 반품, 구매취소 등을 대비한 임시 적립금으로 사용가능 적립금으로 전환되기까지 상품구매에 사용하실 수 없습니다.</li>
-				<li>사용가능 적립금(총적립금 - 사용된적립금 - 미가용적립금)은 상품구매 시 바로 사용가능합니다.</li>
-			</ol>
-		</div>
-	</div>
 	<div class="row my-5">
 		<div class="col-6 offset-3">
 			<nav aria-label="Page navigation example">
 				<ul class="pagination justify-content-center">
 					<li class="page-item <%=pagination.isExistPrev()? "" : "disabled" %>">
-					    <a class="page-link" href="pointHistory.jsp?no=<%=pagination.getPrevPage() %>" aria-label="Previous">
+					    <a class="page-link" href="pointHistory.jsp?pageNo=<%=pagination.getPrevPage() %>" aria-label="Previous">
 					    	<span aria-hidden="true">&laquo;</span>
 					    </a>
 				    </li>
@@ -234,13 +236,13 @@
 		for (int i = pagination.getBeginPage() ; i <= pagination.getEndPage() ; i++) {
 	%>				    
 					<li class="page-item <%=pagination.getPageNo() == i ? "active" : "" %>">
-						<a class="page-link" href="pointHistory.jsp?no=<%=i %>"><%=i %></a>
+						<a class="page-link" href="pointHistory.jsp?pageNo=<%=i %>"><%=i %></a>
 					</li>
 	<%
 		}
 	%>
 				    <li class="page-item <%=pagination.isExistNext()? "" : "disabled" %>">
-					    <a class="page-link" href="pointHistory.jsp?no=<%=pagination.getNextPage() %>" aria-label="Next">
+					    <a class="page-link" href="pointHistory.jsp?pageNo=<%=pagination.getNextPage() %>" aria-label="Next">
 					    	<span aria-hidden="true">&raquo;</span>
 					    </a>
 				    </li>
@@ -251,6 +253,16 @@
 <%
 	}
 %>
+	<div id="guidance" class="my-5 border">
+		<h3 class="border-bottom p-2" style="background-color: #fbfafa;">적립금 안내</h3>
+		<div class="p-1">
+			<ol>
+				<li>주문으로 발생한 적립금은 배송완료 후 20일 부터 실제 사용 가능한 적립금으로 전환됩니다. 배송완료 시점으로부터 20일 동안은 미가용 적립금으로 분류됩니다.</li>
+				<li>미가용 적립금은 반품, 구매취소 등을 대비한 임시 적립금으로 사용가능 적립금으로 전환되기까지 상품구매에 사용하실 수 없습니다.</li>
+				<li>사용가능 적립금(총적립금 - 사용된적립금 - 미가용적립금)은 상품구매 시 바로 사용가능합니다.</li>
+			</ol>
+		</div>
+	</div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

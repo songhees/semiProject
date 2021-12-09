@@ -265,7 +265,7 @@
 					<td><%=item.getOrderProductQuantity() %></td>
 					<td><strong><%=productPrice %>원</strong></td>
 					<td><%=item.getStatus() %>
-						<button class="btn btn-dark btn-sm opacity-75 m-1" <%="주문완료".equals(item.getStatus())? "" : "disabled" %>>구매후기</button>
+						<a href="../product/detail.jsp?no=<%=item.getProductNo() %>#review" class="btn btn-dark btn-sm opacity-75 m-1" <%="주문완료".equals(item.getStatus())? "" : "disabled" %>>구매후기</a>
 					</td>
 				</tr>
 <%

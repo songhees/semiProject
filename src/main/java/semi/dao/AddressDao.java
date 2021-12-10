@@ -38,19 +38,7 @@ public class AddressDao {
 		ResultSet rs = pstmt.executeQuery();
 		
 		while (rs.next()) {
-			Address address = new Address();
-			User user = new User();
-			user.setNo(rs.getInt("user_no"));
-			
-			address.setUser(user);
-			
-			address.setAddressNo(rs.getInt("address_no"));
-			address.setAddressName(rs.getString("address_name"));
-			address.setPostalCode(rs.getString("postal_code"));
-			address.setAddressDefault(rs.getString("address_default"));
-			address.setDetail(rs.getString("address_detail"));
-			address.setBaseAddress(rs.getString("base_address"));
-			
+			Address address = toAddressVo(rs);
 			addressList.add(address);
 		}
 		rs.close();
@@ -78,22 +66,14 @@ public class AddressDao {
 		ResultSet rs = pstmt.executeQuery();
 		
 		if (rs.next()) {
-			address = new Address();
-			User user = new User();
-			user.setNo(rs.getInt("user_no"));
-			address.setUser(user);
-			address.setAddressNo(rs.getInt("address_no"));
-			address.setAddressName(rs.getString("address_name"));
-			address.setPostalCode(rs.getString("postal_code"));
-			address.setAddressDefault(rs.getString("address_default"));
-			address.setDetail(rs.getString("address_detail"));
-			address.setBaseAddress(rs.getString("base_address"));
+			address = toAddressVo(rs);
 		}
 		rs.close();
 		pstmt.close();
 		connection.close();
 		return address;
 	}
+	
 	
 	/**
 	 * 주소번호에 해당한는 주소지 검색
@@ -113,20 +93,25 @@ public class AddressDao {
 		ResultSet rs = pstmt.executeQuery();
 		
 		if (rs.next()) {
-			address = new Address();
-			User user = new User();
-			user.setNo(rs.getInt("user_no"));
-			address.setUser(user);
-			address.setAddressNo(rs.getInt("address_no"));
-			address.setAddressName(rs.getString("address_name"));
-			address.setPostalCode(rs.getString("postal_code"));
-			address.setAddressDefault(rs.getString("address_default"));
-			address.setDetail(rs.getString("address_detail"));
-			address.setBaseAddress(rs.getString("base_address"));
+			address = toAddressVo(rs);
 		}
 		rs.close();
 		pstmt.close();
 		connection.close();
+		return address;
+	}
+	
+	private Address toAddressVo(ResultSet rs) throws SQLException {
+		Address address = new Address();
+		User user = new User();
+		user.setNo(rs.getInt("user_no"));
+		address.setUser(user);
+		address.setAddressNo(rs.getInt("address_no"));
+		address.setAddressName(rs.getString("address_name"));
+		address.setPostalCode(rs.getString("postal_code"));
+		address.setAddressDefault(rs.getString("address_default"));
+		address.setDetail(rs.getString("address_detail"));
+		address.setBaseAddress(rs.getString("base_address"));
 		return address;
 	}
 	
@@ -182,6 +167,11 @@ public class AddressDao {
 		connection.close();
 	}
 	
+	/**
+	 * 배송지 번호에 해당하는 주소를 삭제
+	 * @param no 배송지 번호
+	 * @throws SQLException
+	 */
 	public void deleteAddress(int no) throws SQLException {
 		String sql = "delete from semi_user_address "
 				+ "where address_no = ? ";

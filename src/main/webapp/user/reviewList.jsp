@@ -127,6 +127,7 @@
 	String reviewPageNo = request.getParameter("reviewPageNo");
 	ReviewDao reviewDao = ReviewDao.getInstance();
 	int reviewTotalRecords = reviewDao.getTotalRecordsByUserNo(loginUserInfo.getNo());
+	System.out.println("records" + reviewTotalRecords);
 	Pagination pagination = new Pagination(reviewPageNo, reviewTotalRecords, 5, 5);
 	List<ReviewDto> reviewList = reviewDao.getReviewListByUserNo(loginUserInfo.getNo(), pagination.getBegin(), pagination.getEnd());
 %>

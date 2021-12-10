@@ -23,7 +23,8 @@ public class ReviewDao {
 	public int getTotalRecordsByProductNo(int no) throws SQLException {
 		String sql = "select count(*) cnt "
 				   + "from semi_product_review "
-				   + "where product_no = ? ";
+				   + "where product_no = ?"
+				   + "and review_deleted = 'N' ";
 		
 		int totalRecords = 0;
 		
@@ -156,6 +157,77 @@ public class ReviewDao {
 		pstmt.close();
 		connection.close();
 	}
+	
+	public Review getReviewDetailByReviewNo(int reviewNo) throws SQLException {
+		String sql = "select user_no, product_no, review_rate, review_content, review_created_date "
+				   + "from semi_product_review "
+				   + "where review_no = ? ";
+		
+		Review review = null;
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, reviewNo);
+		ResultSet rs = pstmt.executeQuery();
+		if (rs.next()) {
+			review = new Review();
+			review.setUserNo(rs.getInt("user_no"));
+			review.setProductNo(rs.getInt("product_no"));
+			review.setRate(rs.getInt("review_rate"));
+			review.setContent(rs.getString("review_content"));
+			review.setCreatedDate(rs.getDate("review_created_date"));
+		}
+		
+		rs.close();
+		pstmt.close();
+		connection.close();
+		
+		return review;
+	}
+	
+	public void deleteReview(Review review) throws SQLException {
+		String sql = "update semi_product_review "
+				   + "set "
+				   + "	review_deleted = ?, "
+				   + "  review_deleted_date = sysdate "
+				   + "where review_no = ? ";
+		
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setString(1, review.getDeleted());
+		pstmt.setInt(2, review.getNo());
+		pstmt.executeUpdate();
+		
+		pstmt.close();
+		connection.close();
+	}
+	
+	public List<Review> getReviewDetailByProductNo(int ProductNo) throws SQLException {
+		String sql = "select review_no, user_no, review_rate, review_content, review_created_date "
+				   + "from semi_product_review "
+				   + "where product_no = ? ";
+		
+		List<Review> reviewList = new ArrayList<>();
+		Connection connection = getConnection();
+		PreparedStatement pstmt = connection.prepareStatement(sql);
+		pstmt.setInt(1, ProductNo);
+		ResultSet rs = pstmt.executeQuery();
+		if (rs.next()) {
+			Review review = new Review();
+			review.setUserNo(rs.getInt("user_no"));
+			review.setNo(rs.getInt("review_no"));
+			review.setRate(rs.getInt("review_rate"));
+			review.setContent(rs.getString("review_content"));
+			review.setCreatedDate(rs.getDate("review_created_date"));
+			
+			reviewList.add(review);
+		}
+		
+		rs.close();
+		pstmt.close();
+		connection.close();
+		
+		return reviewList;
+	}
 
 	
 	/**
@@ -209,7 +281,8 @@ public class ReviewDao {
 	public int getTotalRecordsByUserNo(int no) throws SQLException {
 		String sql = "select count(*) cnt "
 				   + "from semi_product_review "
-				   + "where user_no = ? ";
+				   + "where user_no = ? "
+				   + "and review_deleted = 'N' ";
 		
 		int totalRecords = 0;
 		

@@ -10,6 +10,7 @@ public class Review {
 	private String content;
 	private Date createdDate;
 	private String filename;
+	private String deleted;
 	
 	public Review() {
 	
@@ -69,6 +70,14 @@ public class Review {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public String getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
 	}
 	
 }

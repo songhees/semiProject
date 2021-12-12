@@ -19,6 +19,8 @@ public class Product {
 	private String detail;
 	private int totalSaleCount;
 	private int totalStock;
+	private String thumbnailUrl;
+	private int reviewCount;
 	private double averageReviewRate;
 	// 제품의 색을 담는 리스트
 	private List<String> colors;
@@ -129,6 +131,22 @@ public class Product {
 
 	public void setTotalStock(int totalStock) {
 		this.totalStock = totalStock;
+	}
+	
+	public String getThumbnailUrl() {
+		return thumbnailUrl;
+	}
+
+	public void setThumbnailUrl(String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
+	}
+	
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
 	}
 
 	public double getAverageReviewRate() {

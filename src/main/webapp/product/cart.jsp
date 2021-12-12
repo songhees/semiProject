@@ -16,31 +16,36 @@
 		return;
 	}
 	// 세가지 정보로 productItem의 no를 찾기
-	int productNo = NumberUtils.toInt(request.getParameter("no"));
-	String color = StringUtils.defaultString(request.getParameter("color"));
-	String size = StringUtils.defaultString(request.getParameter("size"));
+	String[] productNums = request.getParameterValues("no");
+	String[] colors = request.getParameterValues("color");
+	String[] sizes = request.getParameterValues("size");
+	String[] amounts = request.getParameterValues("amount");
 	
 	ProductItemCriteria criteria = new ProductItemCriteria();
-	criteria.setProductNo(productNo);
-	criteria.setColor(color);
-	criteria.setSize(size);
-	
 	ProductItemDao itemDao = ProductItemDao.getInstance();
-	ProductItem item = itemDao.getProductItemByProductItemCriteria(criteria);
-	
-	if (item.getStock() == 0) {
-		response.sendRedirect("detail.jsp?no=" + productNo);
-		return;
-	} 
-	int amount = NumberUtils.toInt(request.getParameter("amount"));
-	
-	CartItemDto itemDto = new CartItemDto();
-	itemDto.setUserNo(loginUserInfo.getNo());
-	itemDto.setProductItemNo(item.getNo());
-	itemDto.setQuantity(amount);
-	
 	CartDao cartDao = CartDao.getInstance();
-	cartDao.insertCartItem(itemDto);	
+	ProductItem item = null;
+	CartItemDto itemDto = new CartItemDto();
+	
+	for (int i=0; i<productNums.length; i++) {
+		int itemNo = Integer.parseInt(productNums[i]);
+		
+		criteria.setProductNo(itemNo);
+		criteria.setColor(colors[i]);
+		criteria.setSize(sizes[i]);
+		item = itemDao.getProductItemByProductItemCriteria(criteria);
+		
+		if (item.getStock() == 0) {
+			response.sendRedirect("detail.jsp?no=" + itemNo);
+			return;
+		}
+		
+		itemDto.setUserNo(loginUserInfo.getNo());
+		itemDto.setProductItemNo(item.getNo());
+		itemDto.setQuantity(Integer.parseInt(amounts[i]));
+		
+		cartDao.insertCartItem(itemDto);
+	}
 	
 	response.sendRedirect("../user/cart/cartList.jsp");
 %>

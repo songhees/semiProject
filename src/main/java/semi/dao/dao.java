@@ -11,11 +11,11 @@ import static util.ConnectionUtil.getConnection;
 import semi.criteria.ProductCriteria;
 import semi.vo.Product;
 
-public class ProductDao {
+public class dao {
 	
-	private static ProductDao self = new ProductDao();
-	private ProductDao() {}
-	public static ProductDao getInstance() {
+	private static dao self = new dao();
+	private dao() {}
+	public static dao getInstance() {
 		return self;
 	}
 	
@@ -59,33 +59,60 @@ public class ProductDao {
 			sql	+= "		and p.category_no = ? ";
 				}
 				if ("product_name".equals(criteria.getSearchType())) {
-			sql	+= "and p.product_name like '%' || ? || '%' ";
+					sql	+= "and p.product_name like '%' || ? || '%' ";
 				} else if ("product_code".equals(criteria.getSearchType())) {
-			sql	+= "and p.product_no = ? ";
+					sql	+= "and p.product_no = ? ";
 				} 
 			sql	+= "		and s.product_no=p.product_no"
 				+ "			and r.product_no(+)=p.product_no) a "
 				+ "where rn >= ? and rn <= ? " ;
 		Connection connection = getConnection();
 		PreparedStatement pstmt = connection.prepareStatement(sql);
-		int i = 0;
-		pstmt.setLong(++i, criteria.getFromPrice());
+		pstmt.setLong(1, criteria.getFromPrice());
+		if (criteria.getToPrice() != 0 && criteria.getCategoryNo() != 0 && !criteria.getKeyword().isBlank()) {
+			pstmt.setLong(2, criteria.getToPrice());
+			pstmt.setInt(3, criteria.getCategoryNo());
+			pstmt.setString(4, criteria.getKeyword());
+			pstmt.setInt(5, criteria.getBegin());
+			pstmt.setInt(6, criteria.getEnd());
 
-		if (criteria.getToPrice() != 0) {
-			pstmt.setLong(++i, criteria.getToPrice());
+		} else if (criteria.getCategoryNo() != 0 && criteria.getToPrice() != 0) {
+			pstmt.setLong(2, criteria.getToPrice());
+			pstmt.setInt(3, criteria.getCategoryNo());
+			pstmt.setInt(4, criteria.getBegin());
+			pstmt.setInt(5, criteria.getEnd());
+		
+		} else if (criteria.getCategoryNo() != 0 && !criteria.getKeyword().isBlank()) {
+			pstmt.setInt(2, criteria.getCategoryNo());
+			pstmt.setString(3, criteria.getKeyword());
+			pstmt.setInt(4, criteria.getBegin());
+			pstmt.setInt(5, criteria.getEnd());
+		
+		} else if (criteria.getToPrice() != 0 && !criteria.getKeyword().isBlank()) {
+			pstmt.setLong(2, criteria.getToPrice());
+			pstmt.setString(3, criteria.getKeyword());
+			pstmt.setInt(4, criteria.getBegin());
+			pstmt.setInt(5, criteria.getEnd());
+			
+		} else if (!criteria.getKeyword().isBlank()) {
+			pstmt.setInt(2, criteria.getCategoryNo());
+			pstmt.setInt(3, criteria.getBegin());
+			pstmt.setInt(4, criteria.getEnd());
+		
+		} else if (criteria.getToPrice() != 0) {
+			pstmt.setLong(2, criteria.getToPrice());
+			pstmt.setInt(3, criteria.getBegin());
+			pstmt.setInt(4, criteria.getEnd());
+			
+		} else if (criteria.getCategoryNo() != 0) {
+			pstmt.setInt(2, criteria.getCategoryNo());
+			pstmt.setInt(3, criteria.getBegin());
+			pstmt.setInt(4, criteria.getEnd());
+			
+		} else {
+			pstmt.setInt(2, criteria.getBegin());
+			pstmt.setInt(3, criteria.getEnd());
 		}
-
-		if (criteria.getCategoryNo() != 0) {
-			pstmt.setInt(++i, criteria.getCategoryNo());
-		} 
-		
-		if (criteria.getSearchType() != null) {
-			pstmt.setString(++i, criteria.getKeyword());
-		}
-		
-		pstmt.setInt(++i, criteria.getBegin());
-		pstmt.setInt(++i, criteria.getEnd());
-		
 		ResultSet rs = pstmt.executeQuery();
 		
 		while(rs.next()) {
@@ -161,3 +188,4 @@ public class ProductDao {
 		return totalRecord;
 	}
 }
+

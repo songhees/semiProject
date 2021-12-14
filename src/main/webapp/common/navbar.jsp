@@ -63,7 +63,7 @@
 		</div>
 		<!-- logo bar -->
 		<div id="#logoImg">
-	  		<a href="/semi-project/index.jsp"><img alt="" src="/shopingMall/resources/images/home/vin.png" style="width: 302px;"></a>
+	  		<a href="/shopingMall/index.jsp"><img alt="" src="/shopingMall/resources/images/home/vin.png" style="width: 302px;"></a>
 		</div>
 		<!-- right side bar-->
 		<div style="overflow: hidden;">

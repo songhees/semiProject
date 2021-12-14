@@ -36,9 +36,9 @@ public class ProductDao {
 				} else if ("priceasc".equals(criteria.getOrderBy())) {
 			sql += "								(order by p.product_price asc) rn, ";
 				} else if ("pricedesc".equals(criteria.getOrderBy())) {
-			sql += "								(order by p.product_price) rn, ";
+			sql += "								(order by p.product_price desc) rn, ";
 				} else if ("favor".equals(criteria.getOrderBy())) {
-			sql += "								(order by p.product_total_sale_count) rn, ";
+			sql += "								(order by p.product_total_sale_count desc) rn, ";
 				} else if ("review".equals(criteria.getOrderBy())) {
 			sql += "								(order by r.cnt desc nulls last) rn, ";
 				}
@@ -100,9 +100,10 @@ public class ProductDao {
 			product.setTotalStock(rs.getInt("product_total_stock"));
 			product.setThumbnailUrl(rs.getString("thumbnail_image_url"));
 			product.setReviewCount(rs.getInt("cnt"));
-			List<String> colors = Arrays.asList(rs.getString("colors").split(", "));
-			product.setColors(colors);
-			
+			if (rs.getString("colors") != null) {
+				List<String> colors = Arrays.asList(rs.getString("colors").split(", "));
+				product.setColors(colors);
+			}
 			products.add(product);
 		}
 		rs.close();
